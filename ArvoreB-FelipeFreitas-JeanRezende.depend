@@ -1,0 +1,17 @@
+# depslib dependency file v1.0
+1570044850 source:c:\users\jean_\desktop\diskbtree\include\header.h
+	"serializable.h"
+
+1570044844 c:\users\jean_\desktop\diskbtree\include\serializable.h
+	<string>
+
+1669658695 source:c:\users\jean_\desktop\diskbtree\include\intserial.h
+	"serializable.h"
+
+1669841966 source:c:\users\jean_\desktop\diskbtree\include\record.h
+	<string>
+	"serializable.h"
+
+1570044844 source:c:\users\jean_\desktop\diskbtree\include\serializable.h
+	<string>
+
