@@ -67,8 +67,8 @@ int main() {
                } else {
                   while (i != 0 ) { //i != 0
                      arq.readRecord(r, i);
-                     cout << "- " << r.getData().getValue() << endl;
-                     i = r.getNext();
+                     //cout << "- " << r.getData().getValue() << endl;
+                     //i = r.getNext();
                   }
                   cout << endl;
                }

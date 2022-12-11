@@ -272,9 +272,7 @@ unsigned long long int typedFile<T>::search(T data) {
     while(fstream::good() && i != 0){
         this->readRecord(aux,i);
 
-        if(data == aux.getData()){
-            return i;
-        }
+//        if(data == aux.getData()){return i;}
         i = aux.getNext();
     }
     return 0;
