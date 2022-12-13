@@ -28,9 +28,8 @@ class tree : private typedFile<T>
     protected:
         void printAux(record<T> x, vector<string> &v, unsigned int lvl);
         unsigned int compareKey(record<T> x, T key);
-        bool insertNotFull(record<T> x, T key, unsigned int i);
-        bool split(record<T> x, unsigned int i, unsigned int iX);
-
+        bool insertNotFull(record<T>& x, T key, unsigned int i);
+        bool split(record<T>& x, unsigned int i, unsigned int iX);
 
     private:
         record<T> root;
@@ -59,6 +58,14 @@ record<T> tree<T>::readPage(int i)
 {
     record<T> aux;
     typedFile<T>::readRecord(aux, i);
+    /*
+    cout<< "readPage  :" << aux.getKey(0).getValue()<< endl;
+    cout<< "readPage  :" << aux.getKey(1).getValue()<< endl;
+    cout<< "readPage  :" << aux.getKey(2).getValue()<< endl;
+    cout<< "readPage  :" << aux.getKey(3).getValue()<< endl;
+    cout<< "readPage  :" << aux.getKey(4).getValue()<< endl;
+    cout<< "readPageleng  :" << aux.getLenght()<< endl;
+    */
     return aux;
 }
 
@@ -74,7 +81,7 @@ unsigned int tree<T>::compareKey(record<T> x, T key){
 }
 
 template<class T>
-bool tree<T>::insertNotFull(record<T> x, T key, unsigned int i){
+bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
     //carrega o tamanho do no
     int j = x.getLenght() - 1;
 
@@ -86,8 +93,11 @@ bool tree<T>::insertNotFull(record<T> x, T key, unsigned int i){
         }
         j++;
         x.setKey(j, key);
+        //cout << "lenght : " << x.getLenght() << endl;
         x.setLenght(x.getLenght() + 1);
+        //cout << "new lenght : " << x.getLenght() << endl;
         typedFile<T>::writeRecord(x,i);
+
         return true;
     }else{//caso nao for folha
         record<T> aux;
@@ -108,13 +118,11 @@ bool tree<T>::insertNotFull(record<T> x, T key, unsigned int i){
         }
         aux = this->readPage(x.getChildren(n));
         return insertNotFull(aux, key, x.getChildren(n));
-
     }
-
 }
 
 template<class T>
-bool tree<T>::split(record<T> x, unsigned int i, unsigned int iX){
+bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     record<T> y, z;
 
     y = this->readPage(x.getChildren(i));
@@ -176,7 +184,11 @@ bool tree<T>::insert(T key){
 
     if(x.getLenght() < x.MAX){//se raiz ainda nao estiver cheia
         insertNotFull(x, key, rootIndex); //insere
+
         this->setRoot(x);
+        //cout << "key " << x.getKey(0) << endl;
+        //cout << "root index " << rootIndex << endl;
+        //cout << "x lenght " << x.getLenght() << endl;
         return true;
     }else { // se a raiz esta no tamanho maximo
         //preparação da raiz
@@ -195,7 +207,7 @@ bool tree<T>::insert(T key){
         if ( newRoot.getKey(0) < key){ //esquerda ou direita
             i++;
         }
-        aux = this ->readPage(newRoot.getChildren(i)); // carrega na memoria o filho em questao
+        aux = this->readPage(newRoot.getChildren(i)); // carrega na memoria o filho em questao
 
         insertNotFull(aux, key, newRoot.getChildren(i));
 
@@ -207,7 +219,7 @@ template<class T>
 void tree<T>::print(){
     int lvl = 0;
     vector<string> levels(1);
-    printAux(root, levels, lvl);
+    printAux(this->root, levels, lvl);
 
     for (string s : levels) {
         cout << s << endl;
@@ -223,11 +235,12 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl){
       v.resize(lvl + 1);
    }
 
-   if (!x.isLeaf()) {
+   if (!x.isLeaf()) { //se pag não for folha
       for (i = 0; i <= x.getLenght(); i++) {
-         if (x.getChildren(i) != -1)
-            //record<T> aux = this->readPage(x.getChildren(i));
-            printAux(x.getChildren(i), v, lvl + 1);
+         if (x.getChildren(i) != -1){
+            record<T> rec= this->readPage(x.getChildren(i));
+            printAux(rec, v, lvl + 1);
+         }
       }
    }
 

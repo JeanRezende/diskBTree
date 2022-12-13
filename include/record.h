@@ -95,12 +95,14 @@ record<T>::record(const record<T> &other){
 
     this->leaf = other.leaf;
     this->l= other.l;
+    this->deleted = other.deleted;
 
     keys.resize(MAX);
     children.resize(MAX + 1);
 
     this->children = other.children;
     this->keys = other.keys;
+
 }
 
 template <class T>
@@ -117,6 +119,7 @@ record<T> record<T>::operator=(const record<T> &other) {
     this->keys = other.keys;
     this->leaf = other.leaf;
     this->l = other.l;
+    this->deleted = other.deleted;
 
     return aux;
 }
@@ -160,6 +163,8 @@ void record<T>::fromString(string repr) {
     pos += sizeof(leaf);
     repr.copy(reinterpret_cast<char*>(&deleted),sizeof(deleted),pos);
     pos += sizeof(deleted);
+    repr.copy(reinterpret_cast<char*>(&l),sizeof(l),pos);
+    pos += sizeof(l);
 
     string  aux = "";
     for(int i = 0; i < keys.size(); i++){
@@ -176,7 +181,6 @@ void record<T>::fromString(string repr) {
 
 template <class T>
 vector<T> record<T>::getData() const {
-
     return this->keys;
 }
 

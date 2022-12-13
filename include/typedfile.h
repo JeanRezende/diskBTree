@@ -18,7 +18,7 @@ class typedFile : private fstream {
       bool open(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
       bool isOpen();
       bool close();
-      bool clear();
+      void clear();
       bool readRecord(record<T> &r, unsigned long long int i);
       bool writeRecord(record<T> &r, unsigned long long int i);
       bool insertRecord(record<T> &r);
@@ -44,7 +44,7 @@ template <class T>
 typedFile<T>::typedFile(const string name, const string type, const unsigned int ver, ios::openmode openmode) : fstream(name.c_str(), mode) {
     if(this->open(name,type,ver,mode))
     {
-        cout << "arquivo aberto" << endl;
+        //cout << "arquivo aberto" << endl;
     }
     else
     {
@@ -68,28 +68,32 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
         fstream::open(name.c_str(), openmode);
 
         if(isOpen()){
-            cout << "---- arquivo criado ----" << endl;
+            //cout << "---- arquivo criado ----" << endl;
 
             //inicializa o cabe�alho e escreve
             this->head = header(type, ver); //cria novo objeto para o cabecalho
             //cout << head.getFirstValid() << head.getFirstDeleted() << head.getType() <<head.getVersion() << endl;
             this->writeHeader(this->head); //necessario ja que no if nao escreve
+
+            record<T> root;
+            insertRecord(root); //inicializa a raiz
+
             if(writeHeader(head)) //escreve no arquivo
             {
-                cout << "-- header escrito --" << endl;
+                //cout << "-- header escrito --" << endl;
                 return true;
             }
             else{
-                cout << "-- falha ao escrever o header --" << endl;
+                //cout << "-- falha ao escrever o header --" << endl;
                 return false;
             }
         }else {
-            cout << "---- falha ao criar o arquivo ----" << endl;
+            //cout << "---- falha ao criar o arquivo ----" << endl;
             return false;
         }
     }
     else {
-        cout << "+++ arquivo aberto +++" << endl;
+        //cout << "+++ arquivo aberto +++" << endl;
 
         if(readHeader(head)){
             //cout << "+++ header lido +++" << endl;
@@ -98,10 +102,10 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
             //cout << "versao : " << this->head.getVersion()<< endl;
 
             if(this->head.getType() == type && this->head.getVersion() == ver){
-                cout << "+++ header compativel +++" << endl;
+                //cout << "+++ header compativel +++" << endl;
                 return true;
             }else{
-                cout << "+++ erro no header +++" << endl;
+                //cout << "+++ erro no header +++" << endl;
                 this->close();
                 return false;
             }
@@ -121,7 +125,7 @@ bool typedFile<T>::close() {
 }
 
 template <class T>
-bool typedFile<T>::clear() {
+void typedFile<T>::clear() {
     fstream::clear();
 }
 
@@ -154,7 +158,7 @@ bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i) {
         this->clear();
         fstream::seekp(this->index2pos(i), ios::beg); //cabeca de escrita na pos ref ao index
         fstream::write(r.toString().c_str(), r.size()); //escreve
-        cout << "record inserido" << endl;
+        //cout << "record inserido" << endl;
         return fstream::good();
     }
     else
@@ -170,7 +174,7 @@ bool typedFile<T>::insertRecord(record<T> &r) {
     //atualiza o primeiro valido
     if(this->head.getFirstDeleted() != 0 ) //lista de deletados nao esta vazia
     {
-        cout << "lista de deletados tem posicao para reciclar" << endl;
+        //cout << "lista de deletados tem posicao para reciclar" << endl;
         unsigned long long int i = this->head.getFirstDeleted();
         record<T> aux;
 
@@ -183,7 +187,7 @@ bool typedFile<T>::insertRecord(record<T> &r) {
 
             this->writeRecord(aux, i);
             this->writeHeader(this->head);
-            cout << "inserido" << endl;
+            //cout << "inserido" << endl;
             return true;
         }
         return false;
