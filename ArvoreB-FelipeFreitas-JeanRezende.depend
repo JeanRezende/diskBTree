@@ -15,25 +15,27 @@
 1570044844 source:c:\users\jean_\desktop\diskbtree\include\serializable.h
 	<string>
 
-1670788451 source:c:\users\jean_\desktop\diskbtree\main.cpp
+1670899694 source:c:\users\jean_\desktop\diskbtree\main.cpp
 	<iostream>
 	<clocale>
 	"header.h"
 	"record.h"
 	"typedfile.h"
 	"intserial.h"
+	"tree.h"
 
 1669855945 c:\users\jean_\desktop\diskbtree\include\header.h
 	"serializable.h"
 
-1670788535 c:\users\jean_\desktop\diskbtree\include\record.h
+1670901263 c:\users\jean_\desktop\diskbtree\include\record.h
 	<string>
 	<vector>
 	"serializable.h"
 
-1670788573 c:\users\jean_\desktop\diskbtree\include\typedfile.h
+1670900472 c:\users\jean_\desktop\diskbtree\include\typedfile.h
 	<fstream>
 	<type_traits>
+	<header.h>
 
 1669855900 c:\users\jean_\desktop\diskbtree\include\intserial.h
 	"serializable.h"
@@ -43,4 +45,14 @@
 
 1669855911 source:c:\users\jean_\desktop\diskbtree\src\intserial.cpp
 	"intserial.h"
+
+1670888973 source:c:\users\jean_\desktop\diskbtree\src\tree.cpp
+	"tree.h"
+
+1670901444 c:\users\jean_\desktop\diskbtree\include\tree.h
+	<iostream>
+	<string>
+	<vector>
+	"record.h"
+	"typedfile.h"
 

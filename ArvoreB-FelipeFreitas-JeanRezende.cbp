@@ -38,10 +38,12 @@
 		<Unit filename="include/intserial.h" />
 		<Unit filename="include/record.h" />
 		<Unit filename="include/serializable.h" />
+		<Unit filename="include/tree.h" />
 		<Unit filename="include/typedfile.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/header.cpp" />
 		<Unit filename="src/intserial.cpp" />
+		<Unit filename="src/tree.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

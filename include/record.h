@@ -6,26 +6,42 @@
 #include "serializable.h"
 
 using namespace std;
-const int MAX = 5;
-const int MIN = 2;
+
 
 template <class T>
 class record : public serializable {
    static_assert(is_base_of<serializable, T>::value, "T must be serializable");
    public:
+       const int MAX = 5;
+    const int MIN = 2;
+
       record();
       record(T d);
       record(bool leaf);
       record(const record<T> &other);
       virtual ~record();
       record<T> operator=(const record<T> &other);
-      T getData() const;
+      vector<T> getData() const;
       void setData(T d);
       unsigned long long int getNext() const;
       void setNext(unsigned long long int n);
       bool isDeleted() const;
       void del();
       void undel();
+
+      unsigned int getLenght();
+      void setLenght(unsigned int l);
+
+      T getKey(unsigned int i);
+      void setKey(unsigned int i, T key);
+
+      unsigned int getChildren(unsigned int i);
+      void setChildren(unsigned int i, unsigned int diskAdress);
+
+      bool isLeaf();
+      void setLeaf(bool leaf);
+
+
       virtual string toString();
       virtual void fromString(string repr);
       virtual string toCSV() { return ""; }
@@ -159,6 +175,12 @@ void record<T>::fromString(string repr) {
 }
 
 template <class T>
+vector<T> record<T>::getData() const {
+
+    return this->keys;
+}
+
+template <class T>
 unsigned long long int record<T>::size() const {
 
     return keys.size()*keys[0].size() + children.size()*sizeof(children[0]) + sizeof(leaf) + sizeof(l) + sizeof(deleted);
@@ -174,5 +196,43 @@ void record<T>::setNext(unsigned long long int n) {
     this->next = n;
 }
 
+template <class T>
+unsigned int record<T>::getLenght() {
+    return this->l;
+}
 
+template <class T>
+void record<T>::setLenght(unsigned int l) {
+    this->l = l;
+}
+
+template <class T>
+T record<T>::getKey(unsigned int i) {
+    return this->keys[i];
+}
+
+template <class T>
+void record<T>::setKey(unsigned int i , T key) {
+    this->keys[i] = key;
+}
+
+template <class T>
+unsigned int record<T>::getChildren(unsigned int i) {
+    return this->children[i];
+}
+
+template <class T>
+void record<T>::setChildren(unsigned int i , unsigned int diskAdress) {
+    this->children[i] = diskAdress;
+}
+
+template <class T>
+bool record<T>::isLeaf() {
+    return this->leaf;
+}
+
+template <class T>
+void record<T>::setLeaf(bool leaf) {
+    this->leaf = leaf;
+}
 #endif // RECORD_H

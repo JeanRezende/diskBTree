@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <type_traits>
+#include <header.h>
 using namespace std;
 
 const ios::openmode mode = ios::in | ios::out | ios::binary;
@@ -25,6 +26,7 @@ class typedFile : private fstream {
       unsigned long long int getFirstValid();
       unsigned long long int getFirstDeleted();
       unsigned long long int search(T data);
+      unsigned long long int nextWriteIndex();
    protected:
       header head;
       bool readHeader(header &h);
@@ -321,4 +323,17 @@ unsigned long long int typedFile<T>::pos2index(unsigned long long int p) {
     record<T> aux;
     return ((p - this ->head.size()) / aux.size()) + 1;
 }
+
+template <class T>
+unsigned long long int typedFile<T>::nextWriteIndex() {
+    if(this->head.getFirstDeleted() != 0){
+        return this->head.getFirstDeleted();
+    }else{
+        unsigned long long int pos;
+        seekp(0,ios::end);
+        pos = fstream::tellp();
+        return pos2index(pos);
+    }
+}
+
 #endif // TYPEDFILE_H
