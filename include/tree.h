@@ -88,7 +88,7 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
     //se for folha insere
     if(x.isLeaf()){
         while(j >= 0 && key < x.getKey(j)){
-            x.setKey(j+1, x.getKey(j));
+            x.setKey(j + 1, x.getKey(j));
             j--;
         }
         j++;
@@ -128,8 +128,6 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     y = this->readPage(x.getChildren(i));
     z.setLeaf(y.isLeaf()); // se y for folha z tambem será
 
-
-
     //copia para z o irmão a direita
     for(int j = 0; j < z.MIN; j++){
         z.setKey(j, y.getKey(j + z.MIN));
@@ -163,8 +161,6 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     x.setKey(i, y.getKey(y.MIN));
     x.setLenght(x.getLenght() + 1);
 
-
-
     //escreve
     typedFile<T>::writeRecord(x, iX);
     typedFile<T>::writeRecord(y, x.getChildren(i));
@@ -182,26 +178,17 @@ bool tree<T>::insert(T key){
     unsigned long long int rootIndex = typedFile<T>::getFirstValid(); //index da raiz
     unsigned int i = 0;
 
-    if(x.getLenght() < x.MAX){//se raiz ainda nao estiver cheia
-        insertNotFull(x, key, rootIndex); //insere
+    if(x.getLenght() == x.MAX){
 
-        this->setRoot(x);
-        //cout << "key " << x.getKey(0) << endl;
-        //cout << "root index " << rootIndex << endl;
-        //cout << "x lenght " << x.getLenght() << endl;
-        return true;
-    }else { // se a raiz esta no tamanho maximo
-        //preparação da raiz
-        //nova raiz
         record<T> newRoot(false), aux; //nao folha
 
         newRoot.setChildren(0, rootIndex); //aponta para a raiz antiga
 
         typedFile<T>::insertRecord(newRoot); // insere a nova raiz
 
-        rootIndex = typedFile<T>::getFirstValid(); //atualiza o index da raiz
-
         split(newRoot, 0, rootIndex); //chama o split para dividir o filho
+
+        //rootIndex = typedFile<T>::getFirstValid(); //atualiza o index da raiz
 
         //inserção da chave
         if ( newRoot.getKey(0) < key){ //esquerda ou direita
@@ -212,6 +199,14 @@ bool tree<T>::insert(T key){
         insertNotFull(aux, key, newRoot.getChildren(i));
 
         this->setRoot(newRoot);
+    }else {
+        insertNotFull(x, key, rootIndex); //insere
+
+        this->setRoot(x);
+        //cout << "key " << x.getKey(0) << endl;
+        //cout << "root index " << rootIndex << endl;
+        //cout << "x lenght " << x.getLenght() << endl;
+        return true;
     }
 }
 
@@ -229,6 +224,7 @@ void tree<T>::print(){
 template<class T>
 void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl){
     string aux = "[";
+    string vazio = "";
    unsigned int i = 0;
 
    if (v.size() < lvl + 1) {
@@ -245,8 +241,9 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl){
    }
 
    for (i = 0; i < x.getLenght(); i++) {
-      aux += (x.getKey(i).getValue()) + ", "; //aux += to_string(x.getKey(i)) + ", ";
+      aux += to_string(x.getKey(i).getValue()) + ", "; //aux += to_string(x.getKey(i)) + ", ";
    }
+
 
    if (aux.length() > 1) {
       aux += "\b\b] ";
@@ -254,7 +251,10 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl){
       aux += "] ";
    }
 
-   v[lvl] += aux;
+    v[lvl].append(aux);
+    //cout << aux << endl;
+    //cout << "v[lvl] :::"  << v[lvl] << endl;
+   //v[lvl] += aux;
 }
 
 template<class T>

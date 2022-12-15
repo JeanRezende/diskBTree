@@ -159,21 +159,21 @@ string record<T>::toString() {
 template <class T>
 void record<T>::fromString(string repr) {
     int pos = 0;
-    repr.copy(reinterpret_cast<char*>(&leaf),sizeof(leaf),pos);
-    pos += sizeof(leaf);
-    repr.copy(reinterpret_cast<char*>(&deleted),sizeof(deleted),pos);
-    pos += sizeof(deleted);
-    repr.copy(reinterpret_cast<char*>(&l),sizeof(l),pos);
-    pos += sizeof(l);
+    repr.copy(reinterpret_cast<char*>(&this->leaf), sizeof(this->leaf), pos);
+    pos += sizeof(this->leaf);
+    repr.copy(reinterpret_cast<char*>(&this->deleted), sizeof(this->deleted), pos);
+    pos += sizeof(this->deleted);
+    repr.copy(reinterpret_cast<char*>(&this->l),sizeof(this->l), pos);
+    pos += sizeof(this->l);
 
     string  aux = "";
-    for(int i = 0; i < keys.size(); i++){
+    for(unsigned int i = 0; i < keys.size(); i++){
         aux = repr.substr(pos, keys[i].size());
         keys[i].fromString(aux);
         pos += keys[i].size();
         aux = "";
     }
-    for( int i = 0; i < children.size(); i++){
+    for( unsigned int i = 0; i < children.size(); i++){
         repr.copy(reinterpret_cast<char*>(&this->children[i]), sizeof(this->children[i]), pos);
         pos += sizeof(this->children[i]);
     }
