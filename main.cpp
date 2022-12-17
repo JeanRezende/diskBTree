@@ -11,6 +11,7 @@ using namespace std;
 int main() {
    setlocale(LC_ALL, "Portuguese");
    int op, n, i;
+   int insercao[15] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
    //typedFile<intSerial> arq("teste.dat", "TPG", 65);
    tree<intSerial> diskTree("file.dat", "TPG", 1);
    intSerial r;
@@ -24,7 +25,8 @@ int main() {
               << "2. Excluir um registro\n"
               << "3. Pesquisar um registro\n"
               << "4. Listar todos os registros\n"
-              << "5. Sair\n\n"
+              << "5. TESTE INSERCAO\n"
+              << "6. Sair\n\n"
               << "Sua opção: ";
          cin >> op;
          switch (op) {
@@ -40,8 +42,6 @@ int main() {
                }else{
                     cout << "não foi possivel inserir" << endl;
                }
-
-
                break;
             case 2:
                cout << "Digite valor deseja remover do arquivo: ";
@@ -71,6 +71,16 @@ int main() {
 
                break;
             case 5:
+                cout << "teste de inserção ";
+                for(int i = 0; i < 15; i++){
+                        r.setValue(insercao[i]);
+                    if(diskTree.insert(r)){
+                        diskTree.print();
+                    }
+                    cout << "------------------------------" << endl;
+                }
+                break;
+            case 6:
                cout << "Encerrando o programa... ";
                //diskTree.close();
                cout << "concluído." << endl;

@@ -27,7 +27,6 @@ class tree : private typedFile<T>
 
     protected:
         void printAux(record<T> x, vector<string> &v, unsigned int lvl);
-        unsigned int compareKey(record<T> x, T key);
         bool insertNotFull(record<T>& x, T key, unsigned int i);
         bool split(record<T>& x, unsigned int i, unsigned int iX);
 
@@ -70,56 +69,47 @@ record<T> tree<T>::readPage(int i)
 }
 
 template<class T>
-unsigned int tree<T>::compareKey(record<T> x, T key){
-    unsigned int i = 0;
-
-    while( i < x.getLenght() && key > x.getKey(i))
-    {
-        i++;
-    }
-    return i;
-}
-
-template<class T>
 bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
-    //carrega o tamanho do no
-    int j = x.getLenght() - 1;
-
     //se for folha insere
     if(x.isLeaf()){
+        int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
         while(j >= 0 && key < x.getKey(j)){
             x.setKey(j + 1, x.getKey(j));
             j--;
         }
-        j++;
-        x.setKey(j, key);
-        //cout << "lenght : " << x.getLenght() << endl;
+        x.setKey(j + 1, key);
         x.setLenght(x.getLenght() + 1);
-        //cout << "new lenght : " << x.getLenght() << endl;
         typedFile<T>::writeRecord(x,i);
 
         return true;
-    }else{//caso nao for folha
+    }
+
+        //caso nao for folha
+        int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
         record<T> aux;
         //verificar por onde descer
-        int n = 0;
-        while(n <= j && x.getKey(n) < key){
-            n++;
+        while(j >= 0 && x.getKey(j) > key){
+            j--;
         }
+        j++;
 
-        aux = this->readPage(x.getChildren(n));
+        //aux = this->readPage(x.getChildren(n));
+        aux = this->readPage(x.getChildren(j));
 
         if(aux.getLenght() == aux.MAX) { //se a pagina tiver cheia divide
-            split(x,n,i); // split
+            split(x,j,i); // split
             //verificar descida
-            if(x.getKey(n) < key){
-                n++;
+            if(x.getKey(j) < key){
+                j++;
             }
         }
-        aux = this->readPage(x.getChildren(n));
-        return insertNotFull(aux, key, x.getChildren(n));
-    }
+        aux = this->readPage(x.getChildren(j));
+
+        return insertNotFull(aux, key, x.getChildren(j));
+
+
 }
+
 
 template<class T>
 bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
@@ -130,11 +120,11 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
 
     //copia para z o irmão a direita
     for(int j = 0; j < z.MIN; j++){
-        z.setKey(j, y.getKey(j + z.MIN));
+        z.setKey(j, y.getKey(j + z.MIN + 1));
     }
     z.setLenght(z.MIN); // novo tamanho do z
 
-    if(y.isLeaf() == false){ //copia dos filhos
+    if(!y.isLeaf()){ //copia dos filhos
         for(int j=0; j < y.MIN + 1; j++){ //ate t + 1
             z.setChildren(j, y.getChildren(j + z.MIN));
         }
@@ -154,7 +144,7 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     if(x.getLenght() > 0){ //realoca chaves de x para esquerda
         for(int j = x.getLenght() - 1; j >= i; j--){
             x.setKey(j + 1, x.getKey(j));
-            if(j==0){break;}
+            //if(j==0){break;}
         }
     }
 
@@ -203,10 +193,6 @@ bool tree<T>::insert(T key){
         insertNotFull(x, key, rootIndex); //insere
 
         this->setRoot(x);
-        //cout << "key " << x.getKey(0) << endl;
-        //cout << "root index " << rootIndex << endl;
-        //cout << "x lenght " << x.getLenght() << endl;
-        return true;
     }
 }
 
