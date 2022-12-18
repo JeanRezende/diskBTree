@@ -1,27 +1,33 @@
 #include "serialCurrency.h"
 #include "math.h"
+
 //remover
 #include <iostream>
 using namespace std;
 
-serialCurrency::serialCurrency() : serializable() {
+serialCurrency::serialCurrency() : serializable()
+{
     this->inteiro = 0;
     this->decimal = 0;
 }
 
-serialCurrency::serialCurrency(double value) : serializable() {
+serialCurrency::serialCurrency(double value) : serializable()
+{
     this->setValue(value);
 }
 
-serialCurrency::serialCurrency(const serialCurrency& other) {
+serialCurrency::serialCurrency(const serialCurrency& other)
+{
     double value = other.getValue();
     this->inteiro = (int) value;
     this->decimal = (int)((value - this->inteiro)*100);
     //overflowDecimal();
 }
 //função que adiciona um inteiro caso o decimal for maior que 100
-void serialCurrency::overflowDecimal(){
-    if(this->decimal % 100 != 0){
+void serialCurrency::overflowDecimal()
+{
+    if(this->decimal % 100 != 0)
+    {
         this->inteiro += this->decimal / 100;
         this->decimal = this->decimal % 100;
         //cout << "inteiro " << inteiro << " decimal " << decimal << endl;
@@ -30,7 +36,8 @@ void serialCurrency::overflowDecimal(){
 
 serialCurrency::~serialCurrency() {}
 
-serialCurrency serialCurrency::operator=(const serialCurrency& other) {
+serialCurrency serialCurrency::operator=(const serialCurrency& other)
+{
     //funciona
     if(this != &other)
     {
@@ -42,63 +49,76 @@ serialCurrency serialCurrency::operator=(const serialCurrency& other) {
     return *this;
 }
 
-bool serialCurrency::operator==(const serialCurrency &other) const {
+bool serialCurrency::operator==(const serialCurrency &other) const
+{
     return this->getValue() == other.getValue();
 }
 
-bool serialCurrency::operator<(const serialCurrency &other) const {
+bool serialCurrency::operator<(const serialCurrency &other) const
+{
     return this->getValue()< other.getValue();
 }
 
-bool serialCurrency::operator<=(const serialCurrency &other) const {
+bool serialCurrency::operator<=(const serialCurrency &other) const
+{
     return this->getValue() <= other.getValue();
 }
 
-bool serialCurrency::operator>(const serialCurrency &other) const {
+bool serialCurrency::operator>(const serialCurrency &other) const
+{
     return this->getValue() > other.getValue();
 }
 
-bool serialCurrency::operator>=(const serialCurrency &other) const {
+bool serialCurrency::operator>=(const serialCurrency &other) const
+{
     return this->getValue() >= other.getValue();
 }
 
-bool serialCurrency::operator!=(const serialCurrency &other) const {
+bool serialCurrency::operator!=(const serialCurrency &other) const
+{
     return this->getValue() != other.getValue();
 }
 
-serialCurrency serialCurrency::operator+(const serialCurrency& other) const {
+serialCurrency serialCurrency::operator+(const serialCurrency& other) const
+{
     serialCurrency aux; //cria variavel auxiliar que recebe a soma
     aux.setValue(this->getValue() + other.getValue()); //acesso ao valor da instancia + get value do other
     return aux; //retorna a soma
 }
 
-serialCurrency serialCurrency::operator-(const serialCurrency& other) const {
+serialCurrency serialCurrency::operator-(const serialCurrency& other) const
+{
     serialCurrency aux; //cria variavel auxiliar que recebe a subtracao
     aux.setValue(this->getValue() - other.getValue()); //acesso ao valor da instancia - get value do other
     return aux; //retorna a subtracao
 }
 
-serialCurrency serialCurrency::operator*(const serialCurrency& other) const {
+serialCurrency serialCurrency::operator*(const serialCurrency& other) const
+{
     serialCurrency aux; //cria variavel auxiliar que recebe a multiplicacao
     aux.setValue(this->getValue() * other.getValue()); //acesso ao valor da instancia * get value do other
     return aux; //retorna a multiplicacao
 }
 
-serialCurrency serialCurrency::operator/(const serialCurrency& other) const {
+serialCurrency serialCurrency::operator/(const serialCurrency& other) const
+{
     serialCurrency aux; //cria variavel auxiliar que recebe a divisao
     aux.setValue(this->getValue() / other.getValue()); //acesso ao valor da instancia / get value do other
     return aux; //retorna a divisao
 }
 
-void serialCurrency::operator++() {
+void serialCurrency::operator++()
+{
     this->inteiro++;
 }
 
-void serialCurrency::operator--() {
+void serialCurrency::operator--()
+{
     this->inteiro--;
 }
 
-void serialCurrency::setValue(double value) {
+void serialCurrency::setValue(double value)
+{
     //parte inteira recebe a conversao de value
     this->inteiro = (int) (value);
     //parte decimal vira inteiro
@@ -107,13 +127,15 @@ void serialCurrency::setValue(double value) {
     cout << "inteiro " << inteiro << " decimal " << decimal << endl;
 }
 
-double serialCurrency::getValue() const {
+double serialCurrency::getValue() const
+{
     double sum = this->inteiro + (double(this->decimal)/100.00);
     return sum;
 }
 
 
-string serialCurrency::toString() {
+string serialCurrency::toString()
+{
     string aux = "";
     aux += string(reinterpret_cast<char*>(&inteiro), sizeof(inteiro));
 //    aux += ".";
@@ -121,7 +143,8 @@ string serialCurrency::toString() {
     return aux;
 }
 
-void serialCurrency::fromString(string repr) {
+void serialCurrency::fromString(string repr)
+{
     int pos = 0;
     repr.copy(reinterpret_cast<char*>(&this->inteiro), sizeof(this->inteiro), pos);
     pos += sizeof(this->inteiro);
@@ -129,31 +152,37 @@ void serialCurrency::fromString(string repr) {
     pos += sizeof(this->decimal);
 }
 
-string serialCurrency::toXML() {
+string serialCurrency::toXML()
+{
 
 }
 
-void serialCurrency::fromXML(string repr) {
+void serialCurrency::fromXML(string repr)
+{
 
 }
 
-string serialCurrency::toCSV() {
+string serialCurrency::toCSV()
+{
 
 }
 
-void serialCurrency::fromCSV(string repr) {
+void serialCurrency::fromCSV(string repr)
+{
 
 }
 
-string serialCurrency::toJSON() {
+string serialCurrency::toJSON()
+{
 
 }
 
-void serialCurrency::fromJSON(string repr) {
+void serialCurrency::fromJSON(string repr)
+{
 
 }
 
-unsigned long long int serialCurrency::size() const {
+unsigned long long int serialCurrency::size() const
+{
     return sizeof(this->inteiro) + sizeof(this->decimal);
 }
-

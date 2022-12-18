@@ -12,24 +12,24 @@ using namespace std;
 template <class T>
 class tree : private typedFile<T>
 {
-    public:
-        tree();
-        tree(const string name, const string type, const unsigned int version);
-        virtual ~tree();
-        bool insert(T key);
-        void print();
-        bool search(T key);
-        bool remove(T key);
-        record<T> getRoot();
-        void setRoot(record<T> root);
-        record<T> readPage(int i);
-        bool isOpen();
-    protected:
-        void printAux(record<T> x, vector<string> &v, unsigned int lvl);
-        bool insertNotFull(record<T>& x, T key, unsigned int i);
-        bool split(record<T>& x, unsigned int i, unsigned int iX);
-    private:
-        record<T> root;
+public:
+    tree();
+    tree(const string name, const string type, const unsigned int version);
+    virtual ~tree();
+    bool insert(T key);
+    void print();
+    bool search(T key);
+    bool remove(T key);
+    record<T> getRoot();
+    void setRoot(record<T> root);
+    record<T> readPage(int i);
+    bool isOpen();
+protected:
+    void printAux(record<T> x, vector<string> &v, unsigned int lvl);
+    bool insertNotFull(record<T>& x, T key, unsigned int i);
+    bool split(record<T>& x, unsigned int i, unsigned int iX);
+private:
+    record<T> root;
 };
 
 template<class T>
@@ -48,7 +48,7 @@ tree<T>::tree(const string name, const string type, const unsigned int version):
 
 
 template<class T>
-tree<T>::~tree(){}
+tree<T>::~tree() {}
 
 template<class T>
 record<T> tree<T>::readPage(int i)
@@ -67,11 +67,14 @@ record<T> tree<T>::readPage(int i)
 }
 
 template<class T>
-bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
+bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
+{
     //se for folha insere
-    if(x.isLeaf()){
+    if(x.isLeaf())
+    {
         int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
-        while(j >= 0 && key < x.getKey(j)){
+        while(j >= 0 && key < x.getKey(j))
+        {
             x.setKey(j + 1, x.getKey(j));
             j--;
         }
@@ -82,32 +85,36 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
         return true;
     }
 
-        //caso nao for folha
-        int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
-        record<T> aux;
-        //verificar por onde descer
-        while(j >= 0 && x.getKey(j) > key){
-            j--;
+    //caso nao for folha
+    int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
+    record<T> aux;
+    //verificar por onde descer
+    while(j >= 0 && x.getKey(j) > key)
+    {
+        j--;
+    }
+    j++;
+
+    //aux = this->readPage(x.getChildren(n));
+    aux = this->readPage(x.getChildren(j));
+
+    if(aux.getLenght() == aux.MAX)   //se a pagina tiver cheia divide
+    {
+        split(x,j,i); // split
+        //verificar descida
+        if(x.getKey(j) < key)
+        {
+            j++;
         }
-        j++;
+    }
+    aux = this->readPage(x.getChildren(j));
 
-        //aux = this->readPage(x.getChildren(n));
-        aux = this->readPage(x.getChildren(j));
-
-        if(aux.getLenght() == aux.MAX) { //se a pagina tiver cheia divide
-            split(x,j,i); // split
-            //verificar descida
-            if(x.getKey(j) < key){
-                j++;
-            }
-        }
-        aux = this->readPage(x.getChildren(j));
-
-        return insertNotFull(aux, key, x.getChildren(j));
+    return insertNotFull(aux, key, x.getChildren(j));
 }
 
 template<class T>
-bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
+bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX)
+{
     cout << " split " << endl;
     record<T> y, z;
 
@@ -115,7 +122,8 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     z.setLeaf(y.isLeaf()); // se y for folha z tambem será
 
     //copia para z o irmão a direita
-    for(int j = 0; j < z.MIN; j++){
+    for(int j = 0; j < z.MIN; j++)
+    {
         z.setKey(j, y.getKey(j + z.MIN + 1));
         cout << " z.setKey(getkey(y)): " << y.getKey(j + z.MIN + 1).getValue() << endl;
     }
@@ -123,16 +131,22 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     cout << " z.Lenght: " << z.MIN << endl;
 
 
-    if(!y.isLeaf()){ //copia dos filhos
-        for(int j=0; j < y.MIN + 1; j++){ //ate t + 1
+    if(!y.isLeaf())  //copia dos filhos
+    {
+        for(int j=0; j < y.MIN + 1; j++)  //ate t + 1
+        {
             z.setChildren(j, y.getChildren(j + z.MIN));
         }
     }
     y.setLenght(y.MIN); //atualiza o tamanho de y ignorando os copiados para z
 
-    for(int j = x.getLenght(); j >= i + 1; j--){ //reorganizando os filhos de x
+    for(int j = x.getLenght(); j >= i + 1; j--)  //reorganizando os filhos de x
+    {
         x.setChildren(j+1, x.getChildren(j));
-        if(j==0){break;}
+        if(j==0)
+        {
+            break;
+        }
     }
 
     //posição que z terá
@@ -140,10 +154,15 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
 
     x.setChildren(i + 1, pos); //filho da direita recebe a pos de um registro deletado ou do final do arquivo
 
-    if(x.getLenght() > 0){ //realoca chaves de x para esquerda
-        for(int j = x.getLenght() - 1; j >= i; j--){
+    if(x.getLenght() > 0)  //realoca chaves de x para esquerda
+    {
+        for(int j = x.getLenght() - 1; j >= i; j--)
+        {
             x.setKey(j + 1, x.getKey(j));
-            if(j==0){break;} //necessario
+            if(j==0)
+            {
+                break;   //necessario
+            }
         }
     }
 
@@ -159,7 +178,8 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
 }
 
 template<class T>
-bool tree<T>::insert(T key){
+bool tree<T>::insert(T key)
+{
     record<T> x = this->getRoot(); //crio ponteiros auxiliares
 
     unsigned long long int rootIndex = typedFile<T>::getFirstValid(); //index da raiz
@@ -167,7 +187,8 @@ bool tree<T>::insert(T key){
 
     cout << "----------------------------------------------------------" << key.getValue() << endl;
 
-    if(x.getLenght() == x.MAX){
+    if(x.getLenght() == x.MAX)
+    {
 
         record<T> newRoot(false), aux; //nao folha
 
@@ -180,7 +201,8 @@ bool tree<T>::insert(T key){
         //rootIndex = typedFile<T>::getFirstValid(); //atualiza o index da raiz
 
         //inserção da chave
-        if ( newRoot.getKey(0) < key){ //esquerda ou direita
+        if ( newRoot.getKey(0) < key)  //esquerda ou direita
+        {
             i++;
         }
         aux = this->readPage(newRoot.getChildren(i)); // carrega na memoria o filho em questao
@@ -188,7 +210,9 @@ bool tree<T>::insert(T key){
         insertNotFull(aux, key, newRoot.getChildren(i));
 
         this->setRoot(newRoot);
-    }else {
+    }
+    else
+    {
         insertNotFull(x, key, rootIndex); //insere
 
         this->setRoot(x);
@@ -196,74 +220,88 @@ bool tree<T>::insert(T key){
 }
 
 template<class T>
-void tree<T>::print(){
+void tree<T>::print()
+{
     int lvl = 0;
     vector<string> levels(1);
     printAux(this->root, levels, lvl);
 
-    for (string s : levels) {
+    for (string s : levels)
+    {
         cout << s << endl;
     }
 }
 
 template<class T>
-void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl){
+void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl)
+{
     string aux = "[";
     string vazio = "";
-   unsigned int i = 0;
+    unsigned int i = 0;
 
-   if (v.size() < lvl + 1) {
-      v.resize(lvl + 1);
-   }
+    if (v.size() < lvl + 1)
+    {
+        v.resize(lvl + 1);
+    }
+    if (!x.isLeaf())   //se pag não for folha
+    {
+        for (i = 0; i <= x.getLenght(); i++)
+        {
+            if (x.getChildren(i) != -1)
+            {
+                record<T> rec= this->readPage(x.getChildren(i));
+                printAux(rec, v, lvl + 1);
+            }
+        }
+    }
+    //concatena as chaves no aux
+    for (i = 0; i < x.getLenght(); i++)
+    {
+        aux += to_string(x.getKey(i).getValue()) + ", ";
+    }
 
-   if (!x.isLeaf()) { //se pag não for folha
-      for (i = 0; i <= x.getLenght(); i++) {
-         if (x.getChildren(i) != -1){
-            record<T> rec= this->readPage(x.getChildren(i));
-            printAux(rec, v, lvl + 1);
-         }
-      }
-   }
-
-   for (i = 0; i < x.getLenght(); i++) {
-      aux += to_string(x.getKey(i).getValue()) + ", "; //aux += to_string(x.getKey(i)) + ", ";
-   }
-
-
-   if (aux.length() > 1) {
-      aux += "\b\b] ";
-   } else {
-      aux += "] ";
-   }
+    if (aux.length() > 1)
+    {
+        aux += "\b\b] ";
+    }
+    else
+    {
+        aux += "] ";
+    }
 
     v[lvl].append(aux);
     //cout << aux << endl;
     //cout << "v[lvl] :::"  << v[lvl] << endl;
-   //v[lvl] += aux;
+    //v[lvl] += aux;
 }
 
 template<class T>
-bool tree<T>::search(T key){
+bool tree<T>::search(T key)
+{
     return false; //
 }
 
 template<class T>
-bool tree<T>::remove(T key){
+bool tree<T>::remove(T key)
+{
     return false;
 }
 
 //getter e setter da raiz
 template<class T>
-record<T> tree<T>::getRoot(){
+record<T> tree<T>::getRoot()
+{
     return this->root;
 }
 template<class T>
-void tree<T>::setRoot(record<T> root){
+void tree<T>::setRoot(record<T> root)
+{
     this->root = root;
 }
 
 template<class T>
-bool tree<T>::isOpen(){
+bool tree<T>::isOpen()
+{
     return typedFile<T>::isOpen();
 }
 
