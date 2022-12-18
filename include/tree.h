@@ -24,12 +24,10 @@ class tree : private typedFile<T>
         void setRoot(record<T> root);
         record<T> readPage(int i);
         bool isOpen();
-
     protected:
         void printAux(record<T> x, vector<string> &v, unsigned int lvl);
         bool insertNotFull(record<T>& x, T key, unsigned int i);
         bool split(record<T>& x, unsigned int i, unsigned int iX);
-
     private:
         record<T> root;
 };
@@ -106,13 +104,11 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i){
         aux = this->readPage(x.getChildren(j));
 
         return insertNotFull(aux, key, x.getChildren(j));
-
-
 }
-
 
 template<class T>
 bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
+    cout << " split " << endl;
     record<T> y, z;
 
     y = this->readPage(x.getChildren(i));
@@ -121,8 +117,11 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     //copia para z o irmão a direita
     for(int j = 0; j < z.MIN; j++){
         z.setKey(j, y.getKey(j + z.MIN + 1));
+        cout << " z.setKey(getkey(y)): " << y.getKey(j + z.MIN + 1).getValue() << endl;
     }
     z.setLenght(z.MIN); // novo tamanho do z
+    cout << " z.Lenght: " << z.MIN << endl;
+
 
     if(!y.isLeaf()){ //copia dos filhos
         for(int j=0; j < y.MIN + 1; j++){ //ate t + 1
@@ -144,7 +143,7 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     if(x.getLenght() > 0){ //realoca chaves de x para esquerda
         for(int j = x.getLenght() - 1; j >= i; j--){
             x.setKey(j + 1, x.getKey(j));
-            //if(j==0){break;}
+            if(j==0){break;} //necessario
         }
     }
 
@@ -157,8 +156,6 @@ bool tree<T>::split(record<T>& x, unsigned int i, unsigned int iX){
     typedFile<T>::writeRecord(z, pos);
 
     return true;
-
-
 }
 
 template<class T>
@@ -167,6 +164,8 @@ bool tree<T>::insert(T key){
 
     unsigned long long int rootIndex = typedFile<T>::getFirstValid(); //index da raiz
     unsigned int i = 0;
+
+    cout << "----------------------------------------------------------" << key.getValue() << endl;
 
     if(x.getLenght() == x.MAX){
 
