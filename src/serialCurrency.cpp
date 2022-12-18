@@ -133,6 +133,18 @@ double serialCurrency::getValue() const
     return sum;
 }
 
+string serialCurrency::getString() const
+{
+    string aux = "";
+    string deci = to_string(abs(this->decimal));
+    if( deci.size() < 2){
+        deci += "0";
+    }
+    aux += to_string(this->inteiro) + "." + deci;
+    //cout << "aux ======== " << aux << endl;
+    return aux;
+}
+
 
 string serialCurrency::toString()
 {

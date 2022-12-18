@@ -255,6 +255,7 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl)
             }
         }
     }
+    /*
     //concatena as chaves no aux modificando a visualizacao
     for (i = 0; i < x.getLenght(); i++)
     {
@@ -267,22 +268,11 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl)
         //cout << "aft: " << aft << endl;
         aux += bef + "." + aft + ", ";
     }
-    /*
-    string str = "-5.50000";
-    size_t found;
-
-    found=str.find('.');
-    if (found!=std::string::npos)
-        std::cout << "Period found at: " << found << '\n';
-
-    string num, den;
-
-    num = str.substr (0, found);
-    den = str.substr(found, found+1);
-
-    cout << "numerador: " << num << endl;
-    cout << "mantiça: " << den << endl;
     */
+    for (i = 0; i < x.getLenght(); i++)
+    {
+        aux += x.getKey(i).getString() + ", ";
+    }
 
     if (aux.length() > 1)
     {

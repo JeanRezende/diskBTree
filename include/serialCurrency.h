@@ -23,6 +23,7 @@ public:
     serialCurrency operator*(const serialCurrency& other) const;
     serialCurrency operator/(const serialCurrency& other) const;
     void overflowDecimal();
+    string getString() const;
     void operator++();
     void operator--();
     void setValue(double value);
