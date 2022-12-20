@@ -15,7 +15,7 @@
 1570044844 source:c:\users\jean_\desktop\diskbtree\include\serializable.h
 	<string>
 
-1671308857 source:c:\users\jean_\desktop\diskbtree\main.cpp
+1671501107 source:c:\users\jean_\desktop\diskbtree\main.cpp
 	<iostream>
 	<clocale>
 	"header.h"
@@ -24,6 +24,7 @@
 	"intserial.h"
 	"tree.h"
 	"serialCurrency.h"
+	<locale.h>
 
 1669855945 c:\users\jean_\desktop\diskbtree\include\header.h
 	"serializable.h"
@@ -57,12 +58,12 @@
 	"record.h"
 	"typedfile.h"
 
-1671383611 source:c:\users\jean_\desktop\diskbtree\src\serialcurrency.cpp
+1671501150 source:c:\users\jean_\desktop\diskbtree\src\serialcurrency.cpp
 	"serialCurrency.h"
 	"math.h"
 	<iostream>
 
-1671383229 c:\users\jean_\desktop\diskbtree\include\serialcurrency.h
+1671498639 c:\users\jean_\desktop\diskbtree\include\serialcurrency.h
 	"serializable.h"
 	<math.h>
 

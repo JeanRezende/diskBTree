@@ -8,10 +8,13 @@
 
 #include "serialCurrency.h"
 
+#include <locale.h>  // for std::setlocale
+
 using namespace std;
 
 int main() {
-   setlocale(LC_ALL, "Portuguese");
+   //setlocale(LC_ALL, "Portuguese");
+   setlocale(LC_ALL, "C"); //usando o internacional o double printa com o . entre os decimais
    ///int op, n, i;
    int op, i;
    double n;

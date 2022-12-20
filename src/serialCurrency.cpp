@@ -7,8 +7,7 @@ using namespace std;
 
 serialCurrency::serialCurrency() : serializable()
 {
-    this->inteiro = 0;
-    this->decimal = 0;
+    this->value = 0.0;
 }
 
 serialCurrency::serialCurrency(double value) : serializable()
@@ -18,20 +17,13 @@ serialCurrency::serialCurrency(double value) : serializable()
 
 serialCurrency::serialCurrency(const serialCurrency& other)
 {
-    double value = other.getValue();
-    this->inteiro = (int) value;
-    this->decimal = (int)((value - this->inteiro)*100);
+    this->value = other.getValue();
     //overflowDecimal();
 }
 //função que adiciona um inteiro caso o decimal for maior que 100
 void serialCurrency::overflowDecimal()
 {
-    if(this->decimal % 100 != 0)
-    {
-        this->inteiro += this->decimal / 100;
-        this->decimal = this->decimal % 100;
-        //cout << "inteiro " << inteiro << " decimal " << decimal << endl;
-    }
+
 }
 
 serialCurrency::~serialCurrency() {}
@@ -41,9 +33,7 @@ serialCurrency serialCurrency::operator=(const serialCurrency& other)
     //funciona
     if(this != &other)
     {
-        double value = other.getValue();
-        this->inteiro = (int) value;
-        this->decimal = (int)((value - this->inteiro)*100);
+        this->value = other.getValue();
         return *this;
     }
     return *this;
@@ -109,59 +99,65 @@ serialCurrency serialCurrency::operator/(const serialCurrency& other) const
 
 void serialCurrency::operator++()
 {
-    this->inteiro++;
+    this->value++;
 }
 
 void serialCurrency::operator--()
 {
-    this->inteiro--;
+    this->value--;
 }
 
 void serialCurrency::setValue(double value)
 {
-    //parte inteira recebe a conversao de value
-    this->inteiro = (int) (value);
-    //parte decimal vira inteiro
-    this->decimal = (int)((value - this->inteiro)*100);
+    this->value = value;
     //overflowDecimal();
-    cout << "inteiro " << inteiro << " decimal " << decimal << endl;
+    cout << "SET VALUE  : " << this->value << endl;
 }
 
 double serialCurrency::getValue() const
 {
-    double sum = this->inteiro + (double(this->decimal)/100.00);
-    return sum;
+    return this->value;
 }
-
+/*
 string serialCurrency::getString() const
 {
-    string aux = "";
-    string deci = to_string(abs(this->decimal));
-    if( deci.size() < 2){
-        deci += "0";
-    }
-    aux += to_string(this->inteiro) + "." + deci;
-    //cout << "aux ======== " << aux << endl;
+    string bef, aft, aux = "";
+    string str = to_string(this->getValue());
+    size_t found;
+    cout << "string  :: " << str << endl;
+
+    found = str.find(",");
+    bef = str.substr (0, found);
+    aft = str.substr(found+1, found+2);
+    cout  << "found ::: " << found << endl;
+
+    aux += bef + "." + aft;
+
     return aux;
+}
+*/
+string serialCurrency::getString() const
+{
+    string str = to_string(this->getValue());
+    str = str.substr(0, str.find(".") + 3);
+    //int dotIndex = str.find(".");
+    //string aux = str.substr(0, dotIndex) + "." + str.substr(dotIndex);
+
+    //cout << aux << endl;
+    //return aux;
+    return str;
 }
 
 
 string serialCurrency::toString()
 {
-    string aux = "";
-    aux += string(reinterpret_cast<char*>(&inteiro), sizeof(inteiro));
-//    aux += ".";
-    aux += string(reinterpret_cast<char*>(&decimal), sizeof(decimal));
-    return aux;
+    return string(reinterpret_cast<char*>(&value), sizeof(value));
 }
 
 void serialCurrency::fromString(string repr)
 {
     int pos = 0;
-    repr.copy(reinterpret_cast<char*>(&this->inteiro), sizeof(this->inteiro), pos);
-    pos += sizeof(this->inteiro);
-    repr.copy(reinterpret_cast<char*>(&this->decimal), sizeof(this->decimal), pos);
-    pos += sizeof(this->decimal);
+    repr.copy(reinterpret_cast<char*>(&this->value), sizeof(this->value), pos);
 }
 
 string serialCurrency::toXML()
@@ -196,5 +192,5 @@ void serialCurrency::fromJSON(string repr)
 
 unsigned long long int serialCurrency::size() const
 {
-    return sizeof(this->inteiro) + sizeof(this->decimal);
+    return sizeof(this->value);
 }

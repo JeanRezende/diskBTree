@@ -39,7 +39,6 @@ public:
     virtual unsigned long long int size() const;
 
 protected:
-    int inteiro;
-    int decimal;
+    double value;
 };
 #endif // serialCurrency_H
