@@ -118,33 +118,11 @@ double serialCurrency::getValue() const
 {
     return this->value;
 }
-/*
-string serialCurrency::getString() const
-{
-    string bef, aft, aux = "";
-    string str = to_string(this->getValue());
-    size_t found;
-    cout << "string  :: " << str << endl;
 
-    found = str.find(",");
-    bef = str.substr (0, found);
-    aft = str.substr(found+1, found+2);
-    cout  << "found ::: " << found << endl;
-
-    aux += bef + "." + aft;
-
-    return aux;
-}
-*/
 string serialCurrency::getString() const
 {
     string str = to_string(this->getValue());
     str = str.substr(0, str.find(".") + 3);
-    //int dotIndex = str.find(".");
-    //string aux = str.substr(0, dotIndex) + "." + str.substr(dotIndex);
-
-    //cout << aux << endl;
-    //return aux;
     return str;
 }
 

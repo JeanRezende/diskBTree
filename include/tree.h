@@ -24,6 +24,7 @@ public:
     void setRoot(record<T> root);
     record<T> readPage(int i);
     bool isOpen();
+    bool close();
 protected:
     void printAux(record<T> x, vector<string> &v, unsigned int lvl);
     bool insertNotFull(record<T>& x, T key, unsigned int i);
@@ -46,6 +47,11 @@ tree<T>::tree(const string name, const string type, const unsigned int version):
     this->setRoot(this->readPage(rootIndex));
 }
 
+template<class T>
+bool tree<T>::close()
+{
+    return typedFile<T>::close();
+}
 
 template<class T>
 tree<T>::~tree() {}
@@ -55,14 +61,6 @@ record<T> tree<T>::readPage(int i)
 {
     record<T> aux;
     typedFile<T>::readRecord(aux, i);
-    /*
-    cout<< "readPage  :" << aux.getKey(0).getValue()<< endl;
-    cout<< "readPage  :" << aux.getKey(1).getValue()<< endl;
-    cout<< "readPage  :" << aux.getKey(2).getValue()<< endl;
-    cout<< "readPage  :" << aux.getKey(3).getValue()<< endl;
-    cout<< "readPage  :" << aux.getKey(4).getValue()<< endl;
-    cout<< "readPageleng  :" << aux.getLenght()<< endl;
-    */
     return aux;
 }
 
@@ -210,13 +208,18 @@ bool tree<T>::insert(T key)
         insertNotFull(aux, key, newRoot.getChildren(i));
 
         this->setRoot(newRoot);
+
+        return true;
     }
     else
     {
         insertNotFull(x, key, rootIndex); //insere
 
         this->setRoot(x);
+
+        return true;
     }
+    return false;
 }
 
 template<class T>
@@ -255,20 +258,6 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl)
             }
         }
     }
-    /*
-    //concatena as chaves no aux modificando a visualizacao
-    for (i = 0; i < x.getLenght(); i++)
-    {
-        str = to_string(x.getKey(i).getValue());
-        //cout << "str: " << str << endl;
-        found = str.find(",");
-        bef = str.substr (0, found);
-        aft = str.substr(found+1, found+1);
-        //cout << "bef: " << bef << endl;
-        //cout << "aft: " << aft << endl;
-        aux += bef + "." + aft + ", ";
-    }
-    */
     for (i = 0; i < x.getLenght(); i++)
     {
         aux += x.getKey(i).getString() + ", ";
@@ -284,9 +273,6 @@ void tree<T>::printAux(record<T> x, vector<string> &v, unsigned int lvl)
     }
 
     v[lvl].append(aux);
-    //cout << aux << endl;
-    //cout << "v[lvl] :::"  << v[lvl] << endl;
-    //v[lvl] += aux;
 }
 
 template<class T>

@@ -9,42 +9,44 @@ using namespace std;
 const ios::openmode mode = ios::in | ios::out | ios::binary;
 
 template <class T>
-class typedFile : private fstream {
-   static_assert(is_base_of<serializable, T>::value, "T must be serializable");
-   public:
-      typedFile();
-      typedFile(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
-      virtual ~typedFile();
-      bool open(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
-      bool isOpen();
-      bool close();
-      void clear();
-      bool readRecord(record<T> &r, unsigned long long int i);
-      bool writeRecord(record<T> &r, unsigned long long int i);
-      bool insertRecord(record<T> &r);
-      bool deleteRecord(unsigned long long int i);
-      unsigned long long int getFirstValid();
-      unsigned long long int getFirstDeleted();
-      unsigned long long int search(T data);
-      unsigned long long int nextWriteIndex();
-   protected:
-      header head;
-      bool readHeader(header &h);
-      bool writeHeader(header &h);
-      unsigned long long int index2pos(unsigned long long int i);
-      unsigned long long int pos2index(unsigned long long int p);
+class typedFile : private fstream
+{
+    static_assert(is_base_of<serializable, T>::value, "T must be serializable");
+public:
+    typedFile();
+    typedFile(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
+    virtual ~typedFile();
+    bool open(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
+    bool isOpen();
+    bool close();
+    void clear();
+    bool readRecord(record<T> &r, unsigned long long int i);
+    bool writeRecord(record<T> &r, unsigned long long int i);
+    bool insertRecord(record<T> &r);
+    bool deleteRecord(unsigned long long int i);
+    unsigned long long int getFirstValid();
+    unsigned long long int getFirstDeleted();
+    unsigned long long int search(T data);
+    unsigned long long int nextWriteIndex();
+protected:
+    header head;
+    bool readHeader(header &h);
+    bool writeHeader(header &h);
+    unsigned long long int index2pos(unsigned long long int i);
+    unsigned long long int pos2index(unsigned long long int p);
 };
 
 template <class T>
-typedFile<T>::typedFile() : fstream() {
-
-}
+typedFile<T>::typedFile() : fstream()
+{}
 
 template <class T>
-typedFile<T>::typedFile(const string name, const string type, const unsigned int ver, ios::openmode openmode) : fstream(name.c_str(), mode) {
+typedFile<T>::typedFile(const string name, const string type, const unsigned int ver, ios::openmode openmode) : fstream(name.c_str(), mode)
+{
     if(this->open(name,type,ver,mode))
     {
         //cout << "arquivo aberto" << endl;
+        cerr << "arquivo aberto" << endl;
     }
     else
     {
@@ -53,21 +55,22 @@ typedFile<T>::typedFile(const string name, const string type, const unsigned int
 }
 
 template <class T>
-typedFile<T>::~typedFile() {
-
-}
+typedFile<T>::~typedFile(){}
 
 template <class T>
-bool typedFile<T>::open(const string name, const string type, const unsigned int ver, ios::openmode openmode) {
+bool typedFile<T>::open(const string name, const string type, const unsigned int ver, ios::openmode openmode)
+{
     fstream::open(name.c_str(), openmode); //tenta abrir
     //fstream::open(name.c_str(), openmode | ios::trunc);
-    if(!isOpen()){
+    if(!isOpen())
+    {
         // caso tenha erro ao abrir
         fstream::open(name.c_str(), ios::out);
         this->close();
         fstream::open(name.c_str(), openmode);
 
-        if(isOpen()){
+        if(isOpen())
+        {
             //cout << "---- arquivo criado ----" << endl;
 
             //inicializa o cabe�alho e escreve
@@ -83,28 +86,36 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
                 //cout << "-- header escrito --" << endl;
                 return true;
             }
-            else{
+            else
+            {
                 //cout << "-- falha ao escrever o header --" << endl;
                 return false;
             }
-        }else {
+        }
+        else
+        {
             //cout << "---- falha ao criar o arquivo ----" << endl;
             return false;
         }
     }
-    else {
+    else
+    {
         //cout << "+++ arquivo aberto +++" << endl;
 
-        if(readHeader(head)){
+        if(readHeader(head))
+        {
             //cout << "+++ header lido +++" << endl;
 
             //cout << "tipo : " << this->head.getType()<< endl;
             //cout << "versao : " << this->head.getVersion()<< endl;
 
-            if(this->head.getType() == type && this->head.getVersion() == ver){
+            if(this->head.getType() == type && this->head.getVersion() == ver)
+            {
                 //cout << "+++ header compativel +++" << endl;
                 return true;
-            }else{
+            }
+            else
+            {
                 //cout << "+++ erro no header +++" << endl;
                 this->close();
                 return false;
@@ -114,23 +125,27 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
 }
 
 template <class T>
-bool typedFile<T>::isOpen() {
+bool typedFile<T>::isOpen()
+{
     return fstream::is_open();
 }
 
 template <class T>
-bool typedFile<T>::close() {
+bool typedFile<T>::close()
+{
     fstream::close();
     return true;
 }
 
 template <class T>
-void typedFile<T>::clear() {
+void typedFile<T>::clear()
+{
     fstream::clear();
 }
 
 template <class T>
-bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i) {
+bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i)
+{
     if(isOpen())
     {
         this->clear();
@@ -152,7 +167,8 @@ bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i) {
 }
 
 template <class T>
-bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i) {
+bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i)
+{
     if(isOpen())
     {
         this->clear();
@@ -169,7 +185,8 @@ bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i) {
 }
 
 template <class T>
-bool typedFile<T>::insertRecord(record<T> &r) {
+bool typedFile<T>::insertRecord(record<T> &r)
+{
     //se tem registros deletados
     //atualiza o primeiro valido
     if(this->head.getFirstDeleted() != 0 ) //lista de deletados nao esta vazia
@@ -210,15 +227,19 @@ bool typedFile<T>::insertRecord(record<T> &r) {
 }
 
 template <class T>
-bool typedFile<T>::deleteRecord(unsigned long long int i) {
+bool typedFile<T>::deleteRecord(unsigned long long int i)
+{
     //TODO
     unsigned long long int iPercorre = this->getFirstValid();
     record<T> anterior, objetivo;
 
-    if(i != iPercorre){ //se n�o estiver no inicio
-        while(fstream::good() && iPercorre != 0){
+    if(i != iPercorre)  //se n�o estiver no inicio
+    {
+        while(fstream::good() && iPercorre != 0)
+        {
             this->readRecord(anterior, iPercorre); //l� os records anteriores
-            if(i == anterior.getNext()){
+            if(i == anterior.getNext())
+            {
 
                 //l� o objetivo e movimenta os ponteiros
                 this->readRecord(objetivo, i);
@@ -240,7 +261,9 @@ bool typedFile<T>::deleteRecord(unsigned long long int i) {
             }
             iPercorre = anterior.getNext(); //atualiza a movimenta��o
         }
-    }else{//se estiver no inicio
+    }
+    else  //se estiver no inicio
+    {
         this->readRecord(objetivo, i);
         this->head.setFirstValid(objetivo.getNext());
 
@@ -261,21 +284,25 @@ bool typedFile<T>::deleteRecord(unsigned long long int i) {
 }
 
 template <class T>
-unsigned long long int typedFile<T>::getFirstValid() {
+unsigned long long int typedFile<T>::getFirstValid()
+{
     return this->head.getFirstValid();
 }
 
 template <class T>
-unsigned long long int typedFile<T>::getFirstDeleted() {
+unsigned long long int typedFile<T>::getFirstDeleted()
+{
     return this->head.getFirstDeleted();
 }
 
 template <class T>
-unsigned long long int typedFile<T>::search(T data) {
+unsigned long long int typedFile<T>::search(T data)
+{
     unsigned long long int i = this->getFirstValid(); //index do primeiro valido
     record<T> aux;
 
-    while(fstream::good() && i != 0){
+    while(fstream::good() && i != 0)
+    {
         this->readRecord(aux,i);
 
 //        if(data == aux.getData()){return i;}
@@ -285,7 +312,8 @@ unsigned long long int typedFile<T>::search(T data) {
 }
 
 template <class T>
-bool typedFile<T>::readHeader(header &h) {
+bool typedFile<T>::readHeader(header &h)
+{
     if(isOpen())
     {
         char *aux = new char[h.size()];
@@ -303,7 +331,8 @@ bool typedFile<T>::readHeader(header &h) {
 }
 
 template <class T>
-bool typedFile<T>::writeHeader(header &h) {
+bool typedFile<T>::writeHeader(header &h)
+{
     if (isOpen())
     {
         this->clear();
@@ -315,7 +344,8 @@ bool typedFile<T>::writeHeader(header &h) {
 }
 
 template <class T>
-unsigned long long int typedFile<T>::index2pos(unsigned long long int i) {
+unsigned long long int typedFile<T>::index2pos(unsigned long long int i)
+{
     //TODO tests
     record<T> aux;
     return this->head.size() + ((i - 1) * aux.size());
@@ -323,16 +353,21 @@ unsigned long long int typedFile<T>::index2pos(unsigned long long int i) {
 }
 
 template <class T>
-unsigned long long int typedFile<T>::pos2index(unsigned long long int p) {
+unsigned long long int typedFile<T>::pos2index(unsigned long long int p)
+{
     record<T> aux;
     return ((p - this ->head.size()) / aux.size()) + 1;
 }
 
 template <class T>
-unsigned long long int typedFile<T>::nextWriteIndex() {
-    if(this->head.getFirstDeleted() != 0){
+unsigned long long int typedFile<T>::nextWriteIndex()
+{
+    if(this->head.getFirstDeleted() != 0)
+    {
         return this->head.getFirstDeleted();
-    }else{
+    }
+    else
+    {
         unsigned long long int pos;
         seekp(0,ios::end);
         pos = fstream::tellp();

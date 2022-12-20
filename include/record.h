@@ -12,8 +12,9 @@ template <class T>
 class record : public serializable {
    static_assert(is_base_of<serializable, T>::value, "T must be serializable");
    public:
-       const int MAX = 5;
-    const int MIN = 2;
+
+    const unsigned int MIN = 2;
+    const unsigned int MAX = 5;
 
       record();
       record(T d);
@@ -70,7 +71,7 @@ record<T>::record() : serializable() {
     this->keys.resize(MAX);
     this->children.resize(MAX+1);
 
-    for(int i = 0; i < children.size(); i++){
+    for(unsigned int i = 0; i < children.size(); i++){
         this->children[i] = -1;
     }
 }
