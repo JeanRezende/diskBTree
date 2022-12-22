@@ -53,23 +53,27 @@ int main()
             case 2:
                 cout << "Digite valor deseja remover do arquivo: ";
                 cin >> n;
-                i = diskTree.search(serialCurrency(n));
-                if (i != 0)
+
+                r = serialCurrency(n);
+
+                if (diskTree.remove(r, diskTree.getRoot(), diskTree.getRootIndex()))
                 {
-                    if (diskTree.remove(i))
-                        cout << "Valor " << n << " removido do arquivo.\n" << endl;
-                }
-                else
-                {
+                    cout << "Valor " << n << " removido do arquivo.\n" << endl;
+                }else{
                     cout << "Valor " << n << " não encontrado no arquivo\n" << endl;
                 }
+
+                diskTree.print();
+
                 break;
             case 3:
                 cout << "Digite o valor a ser pesquisado: ";
                 cin >> n;
-                i = diskTree.search(serialCurrency(n));
 
-                if (i != 0)
+
+                i = diskTree.search(serialCurrency(n), diskTree.getRoot());
+
+                if (i >= 0)
                     cout << "Valor " << n << " encontrado no registro " << i << ".\n" << endl;
                 else
                     cout << "Valor " << n << " não encontrado.\n" << endl;

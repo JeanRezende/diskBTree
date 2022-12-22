@@ -35,7 +35,6 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="include/header.h" />
-		<Unit filename="include/intserial.h" />
 		<Unit filename="include/record.h" />
 		<Unit filename="include/serialCurrency.h" />
 		<Unit filename="include/serializable.h" />
@@ -43,7 +42,6 @@
 		<Unit filename="include/typedfile.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/header.cpp" />
-		<Unit filename="src/intserial.cpp" />
 		<Unit filename="src/serialCurrency.cpp" />
 		<Unit filename="src/tree.cpp" />
 		<Extensions>
