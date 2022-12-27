@@ -23,7 +23,7 @@ public:
     bool readRecord(record<T> &r, unsigned long long int i);
     bool writeRecord(record<T> &r, unsigned long long int i);
     bool insertRecord(record<T> &r);
-    bool deleteRecord(unsigned long long int i);
+    bool deleteRecord(record<T> &r, unsigned long long int i);
     unsigned long long int getFirstValid();
     unsigned long long int getFirstDeleted();
     unsigned long long int search(T data);
@@ -185,7 +185,7 @@ bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i)
 }
 
 template <class T>
-bool typedFile<T>::insertRecord(record<T> &r)
+bool typedFile<T>::insertRecord(record<T> &r) //utilizado apenas para raiz
 {
     //se tem registros deletados
     //atualiza o primeiro valido
@@ -227,60 +227,14 @@ bool typedFile<T>::insertRecord(record<T> &r)
 }
 
 template <class T>
-bool typedFile<T>::deleteRecord(unsigned long long int i)
+bool typedFile<T>::deleteRecord(record<T> &r, unsigned long long int i)
 {
-    //TODO
-    unsigned long long int iPercorre = this->getFirstValid();
-    record<T> anterior, objetivo;
+    //coloca o registro na cabeca dos deletados e atualiza o cabecalho
+    r.setNext(this->getFirstDeleted());
+    head.setFirstDeleted(i);
+    this->writeHeader(this->head);
 
-    if(i != iPercorre)  //se n�o estiver no inicio
-    {
-        while(fstream::good() && iPercorre != 0)
-        {
-            this->readRecord(anterior, iPercorre); //l� os records anteriores
-            if(i == anterior.getNext())
-            {
-
-                //l� o objetivo e movimenta os ponteiros
-                this->readRecord(objetivo, i);
-                anterior.setNext(objetivo.getNext());
-                objetivo.setNext(this->getFirstDeleted());
-                objetivo.del();
-
-                //atualizando os records
-                this->writeRecord(anterior,iPercorre);
-                this->writeRecord(objetivo,i);
-
-
-                //atualizando o header
-                this->head.setFirstDeleted(i);
-                this->writeHeader(this->head);
-
-                //deletado
-                return true;
-            }
-            iPercorre = anterior.getNext(); //atualiza a movimenta��o
-        }
-    }
-    else  //se estiver no inicio
-    {
-        this->readRecord(objetivo, i);
-        this->head.setFirstValid(objetivo.getNext());
-
-        objetivo.setNext(this->getFirstDeleted());
-        objetivo.del();
-
-        //atualizando o record
-        this->writeRecord(objetivo, i);
-
-        //atualizando o header
-        this->head.setFirstDeleted(i);
-        this->writeHeader(this->head);
-
-        //deletado
-        return true;
-    }
-    return false;
+    return true;
 }
 
 template <class T>

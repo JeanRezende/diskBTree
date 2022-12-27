@@ -18,7 +18,6 @@ class record : public serializable {
 
       record();
       record(T d);
-      record(bool leaf);
       record(const record<T> &other);
       virtual ~record();
       record<T> operator=(const record<T> &other);
@@ -76,20 +75,6 @@ record<T>::record() : serializable() {
     }
 }
 
-template <class T>
-record<T>::record(bool leaf) : serializable() {
-
-    this->deleted = false;
-    this->leaf = leaf;
-    this->l = 0;
-
-    this->keys.resize(MAX);
-    this->children.resize(MAX+1);
-
-    for(int i = 0; i < children.size(); i++){
-        this->children[i] = -1;
-    }
-}
 
 template <class T>
 record<T>::record(const record<T> &other){

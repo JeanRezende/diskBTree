@@ -14,8 +14,8 @@ int main()
     setlocale(LC_ALL, "C"); //usando o internacional o double printa com o . entre os decimais
     int option, i;
     double n;
-    double insercao[21] = {5.50, 2.01, -5.33, 10.05, 21.13, 1.88, -3.14, 2.86, 37.55, 2.99, 34.31, 49.00, 38.26, 20.85, 23.02, 17.01, 14.92, 13.81, 39.89, -13.22, 7.20};
-
+    //vector<double> insercao = {5.50, 2.01, -5.33, 10.05, 21.13, 1.88, -3.14, 2.86, 37.55, 2.99, 34.31, 49.00, 38.26, 20.85, 23.02, 17.01, 14.92, 13.81, 39.89, -13.22, 7.20, 52.28, 78.32, 29.20, 64.03 };
+    vector<double> insercao = {5.50, 2.01, -5.33, 10.05, 21.13, 1.88, -3.14, 2.86, 37.55, 2.99, 34.31, 49.00, 38.26, 20.85, 23.02, 17.01, 14.92, 13.81, 39.89, -13.22, 7.20};
     tree<serialCurrency> diskTree("diskTree.dat", "VOA", 2);
     serialCurrency r;
 
@@ -85,7 +85,7 @@ int main()
                 break;
             case 5:
                 cout << "teste de inserção ";
-                for(int i = 0; i < 21; i++)
+                for(int i = 0; i < insercao.size(); i++)
                 {
                     r.setValue(insercao[i]);
                     if(diskTree.insert(r))
