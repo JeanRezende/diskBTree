@@ -35,7 +35,7 @@ protected:
     bool removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex);
     bool removeFromInternalPage(record<T> x, unsigned int index, unsigned long long int pageIndex);
     bool downAndOrganize(T key, record<T> x, unsigned int index, unsigned long long int fatherIndex);
-    bool merge(record<T> father, unsigned int index, unsigned long long int fatherIndex);
+    bool merge(record<T>& father, unsigned int index, unsigned long long int fatherIndex);
 private:
     record<T> root;
 };
@@ -474,7 +474,7 @@ bool tree<T>::downAndOrganize(T key, record<T> x, unsigned int index, unsigned l
 }
 
 template<class T>
-bool tree<T>::merge(record<T> father, unsigned int index, unsigned long long int fatherIndex)
+bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long int fatherIndex)
 {
     cout << "merge" << endl;
     record<T> right, left;
@@ -483,8 +483,8 @@ bool tree<T>::merge(record<T> father, unsigned int index, unsigned long long int
     right = readPage(father.getChildren(index + 1));
     int rightIndex(father.getChildren(index + 1));
 
-    cout << "left key 0 " << left.getKey(0).getValue() << endl;
-    cout << "right key 0 " << right.getKey(0).getValue() << endl;
+    //cout << "left key 0 " << left.getKey(0).getValue() << endl;
+    //cout << "right key 0 " << right.getKey(0).getValue() << endl;
 
     //desce a chave do pai para ser a mediana do filho a esquerda
     left.setKey(left.getLenght(),father.getKey(index));
@@ -515,11 +515,19 @@ bool tree<T>::merge(record<T> father, unsigned int index, unsigned long long int
     //novo tamanho da esquerda
     left.setLenght(left.getLenght() + right.getLenght());
 
+    /*
     //remove print
+    cout << "father" << endl;
+    for(unsigned int j = 0; j < father.getLenght(); j++){//passando pelas chaves da direita
+            cout << father.getKey(j).getValue() << endl;
+    }
+    cout << "lenght " << father.getLenght() << endl;
+    cout << "left" << endl;
     for(unsigned int j = 0; j < left.getLenght(); j++){//passando pelas chaves da direita
             cout << left.getKey(j).getValue() << endl;
     }
     cout << "lenght " << left.getLenght() << endl;
+    */
 
     //escreve as mudancas no disco
     typedFile<T>::writeRecord(father, fatherIndex);
@@ -530,6 +538,7 @@ bool tree<T>::merge(record<T> father, unsigned int index, unsigned long long int
 
     if(fatherIndex == this->getRootIndex()) //se for remover da raiz
     {
+        cout << "atualizou o root" << endl;
         this->root = father;
         return true;
     }
