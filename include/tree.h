@@ -332,9 +332,7 @@ bool tree<T>::remove(T key, record<T> x, unsigned long long int pageIndex)
         // vazio
         return true;
     }
-
     unsigned int index = 0;
-
     //busca a chave na pagina e soma no index
     while( x.getLenght() > index && key.getValue() > x.getKey(index).getValue())
     {
@@ -366,11 +364,13 @@ template<class T>
 bool tree<T>::removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex)
 {
     cout << "remove from leaf " << endl;
+    cout << "index = " << index << endl;
     //reorganiza chaves, sobreescrevendo o valor removido
     for(int i = index; i < x.getLenght(); i++ )
     {
         x.setKey(i, x.getKey(i+1)); //set key recebe o proximo
         //como e folha não precisa reorganizar filhos
+        cout << x.getKey(i+1).getValue() <<  endl;
     }
     x.setLenght(x.getLenght() - 1); //diminui 1 do tamanho da pag
     typedFile<T>::writeRecord(x, pageIndex); //escreve
@@ -431,34 +431,14 @@ bool tree<T>::removeFromInternalPage(record<T> x, unsigned int index, unsigned l
 }
 template<class T>
 bool tree<T>::downAndOrganize(T key, record<T> x, unsigned int index, unsigned long long int fatherIndex)
-{ //pagina interna, não folha
+{
+    cout << "downAndOrganize" << endl;
+    //pagina interna, não folha
     record<T> right, left;
 
     left = readPage(x.getChildren(index));
     right = readPage(x.getChildren(index + 1));
 
-    ///esquerda com t-1, direita + que t
-    if(left.getLenght() <= left.MIN && right.getLenght() > right.MIN)
-    {
-        rotate(x, index, fatherIndex, true); //rotaciona
-        left = readPage(x.getChildren(index)); //atualiza a esquerda
-        remove(key, left, x.getChildren(index)); // chama o remover passando o filho rotacionado
-    }else{
-        //se esquerda tem t ou mais chaves
-        fatherIndex = x.getChildren(index); //fatherIndex atualiza
-        remove(key, left, fatherIndex);
-    }
-    ///direita com t-1, esquerda + que t
-    if(left.getLenght() > left.MIN && right.getLenght() <= right.MIN)
-    {
-        rotate(x, index, fatherIndex, false); //rotaciona
-        right = readPage(x.getChildren(index)); //atualiza a direita
-        remove(key, right, x.getChildren(index)); // chama o remover passando o filho rotacionado
-    }
-    else {// caso tem mais que t chaves remove
-        fatherIndex = x.getChildren(index); //fatherIndex atualiza
-        remove(key, right, fatherIndex);
-    }
     ///esquerda e direita com t-1
     if(left.getLenght() <= left.MIN && right.getLenght() <= right.MIN)
     {
@@ -470,7 +450,39 @@ bool tree<T>::downAndOrganize(T key, record<T> x, unsigned int index, unsigned l
             cout << "chaves do left " << j << " :" << left.getKey(j).getValue() << endl;
         }
         remove(key, left,x.getChildren(index));
+        return true;
     }
+    ///esquerda com t-1, direita + que t
+    if(left.getLenght() == left.MIN && right.getLenght() > right.MIN)
+    {
+        rotate(x, index, fatherIndex, true); //rotaciona
+        left = readPage(x.getChildren(index)); //atualiza a esquerda
+        remove(key, left, x.getChildren(index)); // chama o remover passando o filho rotacionado
+        return true;
+    }else{ /// esquerda tem t chaves
+        //se esquerda tem t ou mais chaves
+        cout << "chamando o remove pro filho com t chaves" << endl;
+        cout << fatherIndex << endl;
+
+        fatherIndex = x.getChildren(index); //fatherIndex atualiza
+        remove(key, left, fatherIndex);
+        return true;
+    }
+    ///direita com t-1, esquerda + que t
+    if(left.getLenght() > left.MIN && right.getLenght() <= right.MIN)
+    {
+        rotate(x, index, fatherIndex, false); //rotaciona
+        right = readPage(x.getChildren(index)); //atualiza a direita
+        remove(key, right, x.getChildren(index)); // chama o remover passando o filho rotacionado
+        return true;
+    }
+    else {/// caso direita com t chaves remove
+        fatherIndex = x.getChildren(index); //fatherIndex atualiza
+        remove(key, right, fatherIndex);
+        return true;
+    }
+
+    return true;
 }
 
 template<class T>
