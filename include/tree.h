@@ -86,7 +86,7 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
     if(x.isLeaf())
     {
         int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
-        while(j >= 0 && key < x.getKey(j)) //reorganizar
+        while(j >= 0 && key < x.getKey(j))
         {
             x.setKey(j + 1, x.getKey(j));
             j--;
@@ -98,8 +98,11 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
         return true;
     }
     cout << "insertNOTfull << nao folha << " << endl;
-//caso nao for folha
+    cout << "tamanho da pag " << x.getLenght() <<endl;
+    //caso nao for folha
+    /*
     int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
+    cout << "tamanho da pag " << x.getLenght() <<endl;
     record<T> aux;
     //verificar por onde descer
     while(j >= 0 && x.getKey(j) > key)
@@ -107,17 +110,29 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
         j--;
     }
     j++;
+    */
+    record<T> aux;
+    int j = 0;
+    cout << "key " << key.getValue() << endl;
+    cout << "chave " << x.getKey(j).getValue() << endl;
+    cout << "chave " << x.getKey(j+1).getValue() << endl;
+    cout << "chave " << x.getKey(j+2).getValue() << endl;
 
-    //aux = this->readPage(x.getChildren(n));
+    while (j < x.getLenght() && x.getKey(j).getValue() < key.getValue())
+    {
+        cout << "chave " << x.getKey(j).getValue() << endl;
+        j++;
+    }
+
+
     aux = this->readPage(x.getChildren(j));
+    cout << "aux chave 0 : " << aux.getKey(0).getValue() << endl;
+    cout << "jota : " << j << endl;
 
     if(aux.getLenght() == aux.MAX)   //se a pagina tiver cheia divide
     {
         cout << "insert not full tam max " << endl;
         split(x,j,i); // split
-        cout << "split x:" << x.getKey(0).getValue() << " j: " << j << " i: " << i << endl;
-        //talvez tem que ser aux
-        x = this->readPage(x.getChildren(j)); //atualizando o aux depois do split
         //verificar descida
         if(x.getKey(j) < key)
         {
@@ -130,7 +145,7 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
 }
 
 template<class T>
-bool tree<T>::split(record<T>& x, unsigned int index, unsigned int indexofX) //pai, index onde quer dividir, indexdopai
+bool tree<T>::split(record<T>& x, unsigned int index, unsigned int indexofX)
 {
     cout << " split " << endl;
     record<T> left, right;
@@ -185,6 +200,8 @@ bool tree<T>::split(record<T>& x, unsigned int index, unsigned int indexofX) //p
 
     x.setKey(index, left.getKey(left.MIN));
     x.setLenght(x.getLenght() + 1);
+
+    this->setRoot(x); //atualiza a raiz
 
     //escreve
     typedFile<T>::writeRecord(x, indexofX);
