@@ -162,9 +162,9 @@ bool tree<T>::split(record<T>& x, unsigned int index, unsigned int indexofX)
 
     if(!right.isLeaf()) //se nao for folha tem que copiar os filhos
     {
-        for(int j = 0; j < right.MIN; j++) //de 0 ate MIN+1
+        for(int j = 0; j <= right.MIN; j++) //de 0 ate MIN+1
         {
-            right.setChildren(j, left.getChildren(j+ right.MIN));  //setchildren pos 0 ate MIN + 1
+            right.setChildren(j, left.getChildren(j+ right.MIN + 1));  //setchildren pos 0 ate MIN + 1
             //cout << " z.setKey(getkey(y)): " << left.getKey(j + right.MIN + 1).getValue() << endl;
         }
     }
