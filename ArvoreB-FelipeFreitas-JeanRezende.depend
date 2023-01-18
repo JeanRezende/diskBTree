@@ -65,3 +65,50 @@
 	"serializable.h"
 	<math.h>
 
+1673464019 source:c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\src\header.cpp
+	"header.h"
+
+1673464019 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\header.h
+	"serializable.h"
+
+1673464019 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\serializable.h
+	<string>
+
+1673464019 source:c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\src\serialcurrency.cpp
+	"serialCurrency.h"
+	"math.h"
+	<iostream>
+
+1673464019 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\serialcurrency.h
+	"serializable.h"
+	<math.h>
+
+1673464019 source:c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\src\tree.cpp
+	"tree.h"
+
+1674004436 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\tree.h
+	<iostream>
+	<string>
+	<vector>
+	"record.h"
+	"typedfile.h"
+
+1673464019 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\record.h
+	<string>
+	<vector>
+	"serializable.h"
+
+1673464019 c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\include\typedfile.h
+	<fstream>
+	<type_traits>
+	<header.h>
+
+1674003964 source:c:\users\fdepo\onedrive\documentos\faculdade\semestres\12 semestre\diskbtree\main.cpp
+	<iostream>
+	<clocale>
+	"header.h"
+	"record.h"
+	"typedfile.h"
+	"tree.h"
+	"serialCurrency.h"
+

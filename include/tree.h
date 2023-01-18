@@ -549,7 +549,7 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
     //se não for folha copia os filhos da direita
     if(!left.isLeaf())
     {
-        for(unsigned int j = 0; j < right.getLenght(); j++) //passando pelas chaves da direita
+        for(unsigned int j = 0; j <= right.getLenght(); j++) //passando pelas chaves da direita
         {
             left.setChildren(j + left.getLenght(), right.getChildren(j));
         }
@@ -581,7 +581,7 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
     if(fatherIndex == this->getRootIndex()) //se for remover da raiz
     {
         cout << "atualizou o root" << endl;
-        this->root = father;
+        this->root = left;
         return true;
     }
 
