@@ -1,17 +1,23 @@
+//==================================================================//
+/// Arvore B em disco para a disciplina de Tecnicas de Programacao ///
+/// IFMG Bambui - Engenharia de Computacao 2023                    ///
+/// Alunos:                                                        ///
+/// 0034077 - Felipe de Freitas Silva                              ///
+/// 0036703 - Jean Gustavo Ferreira Rezende                        ///
+//==================================================================//
+
 #ifndef TYPEDFILE_H
 #define TYPEDFILE_H
 
 #include <fstream>
 #include <type_traits>
 #include <header.h>
-using namespace std;
 
 const ios::openmode mode = ios::in | ios::out | ios::binary;
 
 template <class T>
 class typedFile : private fstream
 {
-    static_assert(is_base_of<serializable, T>::value, "T must be serializable");
 public:
     typedFile();
     typedFile(const string name, const string type, const unsigned int version, ios::openmode openmode = mode);
@@ -26,7 +32,6 @@ public:
     bool deleteRecord(record<T> &r, unsigned long long int i);
     unsigned long long int getFirstValid();
     unsigned long long int getFirstDeleted();
-    unsigned long long int search(T data);
     unsigned long long int nextWriteIndex();
 protected:
     header head;
@@ -44,25 +49,17 @@ typedFile<T>::typedFile() : fstream()
 template <class T>
 typedFile<T>::typedFile(const string name, const string type, const unsigned int ver, ios::openmode openmode) : fstream(name.c_str(), mode)
 {
-    if(this->open(name,type,ver,mode))
-    {
-        //cout << "arquivo aberto" << endl;
-        cerr << "arquivo aberto" << endl;
-    }
-    else
-    {
-        cout << "erro ao abrir o arquivo" << endl;
-    }
+    if(this->open(name,type,ver,mode)) {}
+    else {}
 }
 
 template <class T>
-typedFile<T>::~typedFile(){}
+typedFile<T>::~typedFile() {}
 
-template <class T>
+template <class T> //funcao que abre e cria o arquivo em memoria
 bool typedFile<T>::open(const string name, const string type, const unsigned int ver, ios::openmode openmode)
 {
     fstream::open(name.c_str(), openmode); //tenta abrir
-    //fstream::open(name.c_str(), openmode | ios::trunc);
     if(!isOpen())
     {
         // caso tenha erro ao abrir
@@ -70,13 +67,10 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
         this->close();
         fstream::open(name.c_str(), openmode);
 
-        if(isOpen())
+        if(isOpen()) //se o arquivo for aberto e criado
         {
-            //cout << "---- arquivo criado ----" << endl;
-
-            //inicializa o cabe�alho e escreve
+            //inicializa o cabecalho e escreve
             this->head = header(type, ver); //cria novo objeto para o cabecalho
-            //cout << head.getFirstValid() << head.getFirstDeleted() << head.getType() <<head.getVersion() << endl;
             this->writeHeader(this->head); //necessario ja que no if nao escreve
 
             record<T> root;
@@ -84,40 +78,28 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
 
             if(writeHeader(head)) //escreve no arquivo
             {
-                //cout << "-- header escrito --" << endl;
                 return true;
             }
             else
             {
-                //cout << "-- falha ao escrever o header --" << endl;
                 return false;
             }
         }
         else
         {
-            //cout << "---- falha ao criar o arquivo ----" << endl;
             return false;
         }
     }
     else
     {
-        //cout << "+++ arquivo aberto +++" << endl;
-
         if(readHeader(head))
         {
-            //cout << "+++ header lido +++" << endl;
-
-            //cout << "tipo : " << this->head.getType()<< endl;
-            //cout << "versao : " << this->head.getVersion()<< endl;
-
             if(this->head.getType() == type && this->head.getVersion() == ver)
             {
-                //cout << "+++ header compativel +++" << endl;
                 return true;
             }
             else
             {
-                //cout << "+++ erro no header +++" << endl;
                 this->close();
                 return false;
             }
@@ -125,26 +107,26 @@ bool typedFile<T>::open(const string name, const string type, const unsigned int
     }
 }
 
-template <class T>
+template <class T> //funcao que testa se o arquivo esta aberto retornando um boolean
 bool typedFile<T>::isOpen()
 {
     return fstream::is_open();
 }
 
-template <class T>
+template <class T> //funcao para fechar o arquivo
 bool typedFile<T>::close()
 {
     fstream::close();
     return true;
 }
 
-template <class T>
-void typedFile<T>::clear()
+template <class T> //funcao para limpar o buffer do fstream
+void typedFile<T>::clear() //muito importante usar no windows
 {
     fstream::clear();
 }
 
-template <class T>
+template <class T> //funcao para ler o record com base na posicao do arquivo
 bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i)
 {
     if(isOpen())
@@ -153,7 +135,7 @@ bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i)
         char *aux = new char[r.size()]; //apontador de char pra receber a leitura
 
         fstream::seekg(index2pos(i), ios::beg); //cabeca de leitura na pos ref ao index
-        fstream::read(aux, r.size()); //l�
+        fstream::read(aux, r.size());
 
         r.fromString(string(aux,r.size())); //armazena em r
 
@@ -162,12 +144,12 @@ bool typedFile<T>::readRecord(record<T> &r, unsigned long long int i)
     }
     else
     {
-        cout << " erro de leitura " << endl;
+        //cerr << " erro de leitura " << endl;
         return false;
     }
 }
 
-template <class T>
+template <class T> //funcao para escrever o registro em alguma posicao
 bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i)
 {
     if(isOpen())
@@ -175,24 +157,22 @@ bool typedFile<T>::writeRecord(record<T> &r, unsigned long long int i)
         this->clear();
         fstream::seekp(this->index2pos(i), ios::beg); //cabeca de escrita na pos ref ao index
         fstream::write(r.toString().c_str(), r.size()); //escreve
-        //cout << "record inserido" << endl;
         return fstream::good();
     }
     else
     {
-        cout << "erro de escrita" << endl;
+        //cerr << "erro de escrita" << endl;
         return false;
     }
 }
 
-template <class T>
+template <class T> //funcao que insere a primeira raiz
 bool typedFile<T>::insertRecord(record<T> &r) //utilizado apenas para raiz
 {
     //se tem registros deletados
     //atualiza o primeiro valido
     if(this->head.getFirstDeleted() != 0 ) //lista de deletados nao esta vazia
     {
-        //cout << "lista de deletados tem posicao para reciclar" << endl;
         unsigned long long int i = this->head.getFirstDeleted();
         record<T> aux;
 
@@ -227,54 +207,38 @@ bool typedFile<T>::insertRecord(record<T> &r) //utilizado apenas para raiz
     return false;
 }
 
-template <class T>
+template <class T> //funcao que atualiza o endereco do raiz caso atualize
 bool typedFile<T>::setNewRoot(unsigned long long int i) //função utilizada para atualizar a lista de validos
-{ //é necessaria quando há uma fusão que o merge troca a raiz
+{
+    //é necessaria quando há uma fusão que o merge troca a raiz
     this->head.setFirstValid(i);
     this->writeHeader(this->head);
     return true;
 }
 
-template <class T>
+template <class T> //deleta um record e coloca na lista de deletados
 bool typedFile<T>::deleteRecord(record<T> &r, unsigned long long int i)
 {
     //coloca o registro na cabeca dos deletados e atualiza o cabecalho
     r.setNext(this->getFirstDeleted());
     head.setFirstDeleted(i);
     this->writeHeader(this->head);
-
     return true;
 }
 
-template <class T>
+template <class T> //funcao que retorna o primeiro valido(raiz da arvore)
 unsigned long long int typedFile<T>::getFirstValid()
 {
     return this->head.getFirstValid();
 }
 
-template <class T>
+template <class T> //funcao que retorna o primeiro deletado
 unsigned long long int typedFile<T>::getFirstDeleted()
 {
     return this->head.getFirstDeleted();
 }
 
-template <class T>
-unsigned long long int typedFile<T>::search(T data)
-{
-    unsigned long long int i = this->getFirstValid(); //index do primeiro valido
-    record<T> aux;
-
-    while(fstream::good() && i != 0)
-    {
-        this->readRecord(aux,i);
-
-//        if(data == aux.getData()){return i;}
-        i = aux.getNext();
-    }
-    return 0;
-}
-
-template <class T>
+template <class T> //funcao que lê o cabecalho
 bool typedFile<T>::readHeader(header &h)
 {
     if(isOpen())
@@ -284,16 +248,16 @@ bool typedFile<T>::readHeader(header &h)
         //leitura e posicionamento do fstream
         fstream::seekg(0, ios::beg);
         fstream::read(aux, h.size());
-        //utilizando a fun��o fromString para atualizar o header
+        //utilizando a funcao fromString para atualizar o header
         h.fromString(string(aux, h.size()));
 
-        delete aux; //desaloca��o de ponteiro
+        delete aux; //desalocacao de ponteiro
         return true;
     }
     return false;
 }
 
-template <class T>
+template <class T> //funcao que escreve o cabecalho
 bool typedFile<T>::writeHeader(header &h)
 {
     if (isOpen())
@@ -306,23 +270,21 @@ bool typedFile<T>::writeHeader(header &h)
     return false;
 }
 
-template <class T>
+template <class T> //funcao que converte o index para uma posicao no arquivo
 unsigned long long int typedFile<T>::index2pos(unsigned long long int i)
 {
-    //TODO tests
     record<T> aux;
     return this->head.size() + ((i - 1) * aux.size());
-
 }
 
-template <class T>
+template <class T> //funcao que converte uma posicao para o index do registro
 unsigned long long int typedFile<T>::pos2index(unsigned long long int p)
 {
     record<T> aux;
     return ((p - this ->head.size()) / aux.size()) + 1;
 }
 
-template <class T>
+template <class T> //funcao que retorna uma posicao para escrever o proximo registro
 unsigned long long int typedFile<T>::nextWriteIndex()
 {
     if(this->head.getFirstDeleted() != 0)

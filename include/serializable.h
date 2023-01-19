@@ -1,3 +1,11 @@
+//==================================================================//
+/// Arvore B em disco para a disciplina de Tecnicas de Programacao ///
+/// IFMG Bambui - Engenharia de Computacao 2023                    ///
+/// Alunos:                                                        ///
+/// 0034077 - Felipe de Freitas Silva                              ///
+/// 0036703 - Jean Gustavo Ferreira Rezende                        ///
+//==================================================================//
+
 #ifndef SERIALIZABLE_H
 #define SERIALIZABLE_H
 #include <string>

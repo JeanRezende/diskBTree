@@ -2,7 +2,7 @@
 1570044850 source:c:\users\jean_\desktop\diskbtree\include\header.h
 	"serializable.h"
 
-1674030909 c:\users\jean_\desktop\diskbtree\include\serializable.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\serializable.h
 	<string>
 
 1669658695 source:c:\users\jean_\desktop\diskbtree\include\intserial.h
@@ -15,7 +15,7 @@
 1570044844 source:c:\users\jean_\desktop\diskbtree\include\serializable.h
 	<string>
 
-1674129880 source:c:\users\jean_\desktop\diskbtree\main.cpp
+1674165309 source:c:\users\jean_\desktop\diskbtree\main.cpp
 	<iostream>
 	<clocale>
 	"header.h"
@@ -24,15 +24,15 @@
 	"tree.h"
 	"serialCurrency.h"
 
-1674030909 c:\users\jean_\desktop\diskbtree\include\header.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\header.h
 	"serializable.h"
 
-1674030909 c:\users\jean_\desktop\diskbtree\include\record.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\record.h
 	<string>
 	<vector>
 	"serializable.h"
 
-1674034372 c:\users\jean_\desktop\diskbtree\include\typedfile.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\typedfile.h
 	<fstream>
 	<type_traits>
 	<header.h>
@@ -40,28 +40,26 @@
 1669855900 c:\users\jean_\desktop\diskbtree\include\intserial.h
 	"serializable.h"
 
-1674030909 source:c:\users\jean_\desktop\diskbtree\src\header.cpp
+1674165106 source:c:\users\jean_\desktop\diskbtree\src\header.cpp
 	"header.h"
 
 1671065234 source:c:\users\jean_\desktop\diskbtree\src\intserial.cpp
 	"intserial.h"
 
-1674030909 source:c:\users\jean_\desktop\diskbtree\src\tree.cpp
+1674164001 source:c:\users\jean_\desktop\diskbtree\src\tree.cpp
 	"tree.h"
 
-1674129972 c:\users\jean_\desktop\diskbtree\include\tree.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\tree.h
 	<iostream>
 	<string>
 	<vector>
 	"record.h"
 	"typedfile.h"
 
-1674030909 source:c:\users\jean_\desktop\diskbtree\src\serialcurrency.cpp
+1674165106 source:c:\users\jean_\desktop\diskbtree\src\serialcurrency.cpp
 	"serialCurrency.h"
-	"math.h"
-	<iostream>
 
-1674030909 c:\users\jean_\desktop\diskbtree\include\serialcurrency.h
+1674165106 c:\users\jean_\desktop\diskbtree\include\serialcurrency.h
 	"serializable.h"
 	<math.h>
 

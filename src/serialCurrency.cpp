@@ -1,9 +1,12 @@
-#include "serialCurrency.h"
-#include "math.h"
+//==================================================================//
+/// Arvore B em disco para a disciplina de Tecnicas de Programacao ///
+/// IFMG Bambui - Engenharia de Computacao 2023                    ///
+/// Alunos:                                                        ///
+/// 0034077 - Felipe de Freitas Silva                              ///
+/// 0036703 - Jean Gustavo Ferreira Rezende                        ///
+//==================================================================//
 
-//remover
-#include <iostream>
-using namespace std;
+#include "serialCurrency.h"
 
 serialCurrency::serialCurrency() : serializable()
 {
@@ -18,12 +21,6 @@ serialCurrency::serialCurrency(double value) : serializable()
 serialCurrency::serialCurrency(const serialCurrency& other)
 {
     this->value = other.getValue();
-    //overflowDecimal();
-}
-//função que adiciona um inteiro caso o decimal for maior que 100
-void serialCurrency::overflowDecimal()
-{
-
 }
 
 serialCurrency::~serialCurrency() {}
@@ -110,65 +107,32 @@ void serialCurrency::operator--()
 void serialCurrency::setValue(double value)
 {
     this->value = value;
-    //overflowDecimal();
-    cout << "SET VALUE  : " << this->value << endl;
 }
 
 double serialCurrency::getValue() const
 {
     return this->value;
 }
-
+//converte o numero em string mantendo 2 casas decimais pos virgula
 string serialCurrency::getString() const
-{
+{ //utilizado no print para exibir os numeros de forma correta
     string str = to_string(this->getValue());
     str = str.substr(0, str.find(".") + 3);
     return str;
 }
 
-
-string serialCurrency::toString()
+string serialCurrency::toString() //retorna o valor em string
 {
     return string(reinterpret_cast<char*>(&value), sizeof(value));
 }
 
-void serialCurrency::fromString(string repr)
+void serialCurrency::fromString(string repr) //copia o valor de um string e converte para double
 {
     int pos = 0;
     repr.copy(reinterpret_cast<char*>(&this->value), sizeof(this->value), pos);
 }
 
-string serialCurrency::toXML()
-{
-
-}
-
-void serialCurrency::fromXML(string repr)
-{
-
-}
-
-string serialCurrency::toCSV()
-{
-
-}
-
-void serialCurrency::fromCSV(string repr)
-{
-
-}
-
-string serialCurrency::toJSON()
-{
-
-}
-
-void serialCurrency::fromJSON(string repr)
-{
-
-}
-
-unsigned long long int serialCurrency::size() const
+unsigned long long int serialCurrency::size() const //retorna o tamanho do value
 {
     return sizeof(this->value);
 }

@@ -1,3 +1,11 @@
+//==================================================================//
+/// Arvore B em disco para a disciplina de Tecnicas de Programacao ///
+/// IFMG Bambui - Engenharia de Computacao 2023                    ///
+/// Alunos:                                                        ///
+/// 0034077 - Felipe de Freitas Silva                              ///
+/// 0036703 - Jean Gustavo Ferreira Rezende                        ///
+//==================================================================//
+
 #ifndef serialCurrency_H
 #define serialCurrency_H
 
@@ -22,7 +30,6 @@ public:
     serialCurrency operator-(const serialCurrency& other) const;
     serialCurrency operator*(const serialCurrency& other) const;
     serialCurrency operator/(const serialCurrency& other) const;
-    void overflowDecimal();
     string getString() const;
     void operator++();
     void operator--();
@@ -30,12 +37,12 @@ public:
     double getValue() const;
     virtual string toString();
     virtual void fromString(string repr);
-    virtual string toXML();
-    virtual void fromXML(string repr);
-    virtual string toCSV();
-    virtual void fromCSV(string repr);
-    virtual string toJSON();
-    virtual void fromJSON(string repr);
+    virtual string toXML() {};
+    virtual void fromXML(string repr) {};
+    virtual string toCSV() {};
+    virtual void fromCSV(string repr) {};
+    virtual string toJSON() {};
+    virtual void fromJSON(string repr) {};
     virtual unsigned long long int size() const;
 
 protected:
