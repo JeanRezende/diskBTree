@@ -34,10 +34,13 @@ protected:
     bool split(record<T>& x, unsigned int index, unsigned int indexofX);
 
     bool rotate(record<T>& father, unsigned long long int index, unsigned long long int fatherIndex, bool side);
-    bool removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex);
+    bool removeFromLeaf(record<T>& x, unsigned int index, unsigned long long int pageIndex);
     bool removeFromInternalPage(record<T>& x, unsigned int index, unsigned long long int pageIndex);
     bool downAndOrganize(T key, record<T> x, unsigned int index, unsigned long long int fatherIndex);
     bool merge(record<T>& father, unsigned int index, unsigned long long int fatherIndex);
+
+    T findPred(record<T> child,unsigned int index, unsigned long long int childIndex);
+    T findSuc (record<T> child, unsigned long long int childIndex);
 private:
     record<T> root;
 };
@@ -363,18 +366,18 @@ bool tree<T>::remove(T key, record<T> x, unsigned long long int pageIndex)
     return false;
 }
 template<class T>
-bool tree<T>::removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex)
+bool tree<T>::removeFromLeaf(record<T>& x, unsigned int index, unsigned long long int pageIndex)
 {
     cout << "remove from leaf " << endl;
     //reorganiza chaves, sobreescrevendo o valor removido
-    for(int i = index; i < x.getLenght(); i++ )
+    for(int i = index; i < x.getLenght() - 1; i++ )
     {
-        cout << x.getKey(i).getValue() <<  endl;
+        //cout << "chave na pos ant " << x.getKey(i).getValue()  << " na proxima "  << x.getKey(i+1).getValue() << endl;
         x.setKey(i, x.getKey(i+1)); //set key recebe o proximo
         //como e folha não precisa reorganizar filhos
-
     }
     x.setLenght(x.getLenght() - 1); //diminui 1 do tamanho da pag
+    cout << "tamanho da pagina x " << x.getLenght() << endl;
     typedFile<T>::writeRecord(x, pageIndex); //escreve
 
     //caso for removido da raiz deve atualizar o root
@@ -387,7 +390,7 @@ bool tree<T>::removeFromLeaf(record<T> x, unsigned int index, unsigned long long
 }
 template<class T>
 bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned long long int pageIndex)
-{
+{ //remove from internal page é que a chave foi encontrada na pag interna
     cout << "remove internal page " << endl;
     T key = x.getKey(index); //pego novamente a chave para não ter que passar por parametro
     record<T> right, left;
@@ -395,6 +398,34 @@ bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned 
     left = readPage(x.getChildren(index)); //carrega o filho da esquerda
     right = readPage(x.getChildren(index + 1)); //filho da direita
 
+    ///PREDESCESSOR/SUCESSOR
+    if( left.getLenght() > left.MIN)
+    {
+        T predec = findPred(x, index, pageIndex);
+
+        cout << " predecesso: " << predec.getValue() << endl;
+        cout << "index " << index << endl;
+        cout << "child index p " << left.getChildren(index) << endl;
+
+        x.setKey(index, predec);
+
+        for(int i = 0; i < x.getLenght(); i++)
+        {
+            cout << x.getKey(i).getValue() << endl;
+        }
+
+        //escreve as mudancas no disco
+        typedFile<T>::writeRecord(x, pageIndex);
+
+        if(pageIndex == this->getRootIndex()) //se for remover da raiz
+        {
+            this->root = x;
+            return true;
+        }
+
+        return true;
+    }
+    ///ROTAÇÂO
     if( left.getLenght() > left.MIN) //tamanho maior que o minimo
     {
         rotate(x, index, pageIndex, false);
@@ -424,6 +455,64 @@ bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned 
     }
     return true;
 }
+template<class T>
+T tree<T>::findPred(record<T> child,unsigned int index, unsigned long long int childIndex)
+{
+    cout << "find Predecessor" << endl;
+    record<T> right, left;
+
+    cout << "index:: " << index << endl;
+    cout << "key no index:: " << child.getKey(index).getValue() << endl;
+    cout << "child leaf " << child.isLeaf() << endl;
+
+    //antes do while deve descer para o filho da esquerda
+    child = readPage(child.getChildren(index)); //atualiza a esquerda
+    childIndex = child.getChildren(index);
+
+    //O left tem t chaves
+    while(!child.isLeaf())
+    {
+        cout << "child nao folha" << endl;
+
+        left = readPage(child.getChildren(index));
+        right = readPage(child.getChildren(index + 1));
+
+        ///MERGE
+        ///esquerda e direita com t-1
+        if(left.getLenght() == left.MIN && right.getLenght() == right.MIN)
+        {
+            //fusao
+            merge(child, index, childIndex);
+            //atualiza o child
+            child = readPage(child.getChildren(index)); //atualiza a esquerda
+            childIndex = child.getChildren(index);
+        }
+        ///se right > MIN
+        if(right.getLenght() > right.MIN)
+        {
+            child = readPage(child.getChildren(index + 1));
+            childIndex = child.getChildren(index + 1);
+        }
+        ///ROTACAO
+        //rotaciona da esquerda para direita
+        if(left.getLenght() > left.MIN && right.getLenght() == right.MIN)
+        {
+            rotate(child, index, childIndex, false); //rotaciona
+            child = readPage(child.getChildren(index + 1)); //atualiza a esquerda
+            childIndex = child.getChildren(index + 1);
+        }
+    }
+    T key = child.getKey(child.getLenght() - 1);
+    cout << "chave encontrada: " << key.getValue() << endl;
+    cout << "child index: " << childIndex << endl;
+    removeFromLeaf(child, child.getLenght()-1, childIndex);
+
+    return key;
+}
+template<class T>
+T tree<T>::findSuc(record<T> child, unsigned long long int childIndex)
+{}
+
 template<class T>
 bool tree<T>::downAndOrganize(T key, record<T> x, unsigned int index, unsigned long long int fatherIndex)
 {

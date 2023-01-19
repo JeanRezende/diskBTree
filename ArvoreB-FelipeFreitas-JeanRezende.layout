@@ -2,9 +2,9 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="include\record.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\typedfile.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1137" topLine="162" />
+			<Cursor1 position="4842" topLine="142" />
 		</Cursor>
 	</File>
 	<File name="src\tree.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -12,9 +12,9 @@
 			<Cursor1 position="19" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="include\typedfile.h" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1330" topLine="9" />
+			<Cursor1 position="2980" topLine="31" />
 		</Cursor>
 	</File>
 	<File name="include\serialCurrency.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -22,33 +22,38 @@
 			<Cursor1 position="1013" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="include\tree.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14757" topLine="298" />
+		</Cursor>
+		<Folding>
+			<Collapse line="86" />
+			<Collapse line="129" />
+			<Collapse line="197" />
+			<Collapse line="244" />
+			<Collapse line="297" />
+			<Collapse line="517" />
+			<Collapse line="565" />
+		</Folding>
+	</File>
+	<File name="src\serialCurrency.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3917" topLine="140" />
+		</Cursor>
+	</File>
 	<File name="src\header.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\serializable.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="371" topLine="3" />
+			<Cursor1 position="125" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="src\serialCurrency.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="include\record.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="102" topLine="0" />
+			<Cursor1 position="2616" topLine="91" />
 		</Cursor>
-	</File>
-	<File name="include\tree.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5245" topLine="96" />
-		</Cursor>
-		<Folding>
-			<Collapse line="75" />
-			<Collapse line="83" />
-			<Collapse line="126" />
-			<Collapse line="194" />
-			<Collapse line="241" />
-			<Collapse line="254" />
-			<Collapse line="294" />
-		</Folding>
 	</File>
 </CodeBlocks_layout_file>
