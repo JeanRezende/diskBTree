@@ -112,3 +112,50 @@
 	"tree.h"
 	"serialCurrency.h"
 
+1673926373 source:/home/jean/Documents/GitHub/diskBTree/src/header.cpp
+	"header.h"
+
+1673926373 /home/jean/Documents/GitHub/diskBTree/include/header.h
+	"serializable.h"
+
+1673926373 /home/jean/Documents/GitHub/diskBTree/include/serializable.h
+	<string>
+
+1673926373 source:/home/jean/Documents/GitHub/diskBTree/src/serialCurrency.cpp
+	"serialCurrency.h"
+	"math.h"
+	<iostream>
+
+1673926373 /home/jean/Documents/GitHub/diskBTree/include/serialCurrency.h
+	"serializable.h"
+	<math.h>
+
+1673926373 source:/home/jean/Documents/GitHub/diskBTree/src/tree.cpp
+	"tree.h"
+
+1674149337 /home/jean/Documents/GitHub/diskBTree/include/tree.h
+	<iostream>
+	<string>
+	<vector>
+	"record.h"
+	"typedfile.h"
+
+1673926373 /home/jean/Documents/GitHub/diskBTree/include/record.h
+	<string>
+	<vector>
+	"serializable.h"
+
+1674139525 /home/jean/Documents/GitHub/diskBTree/include/typedfile.h
+	<fstream>
+	<type_traits>
+	<header.h>
+
+1674139525 source:/home/jean/Documents/GitHub/diskBTree/main.cpp
+	<iostream>
+	<clocale>
+	"header.h"
+	"record.h"
+	"typedfile.h"
+	"tree.h"
+	"serialCurrency.h"
+

@@ -403,16 +403,11 @@ bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned 
     {
         T predec = findPred(x, index, pageIndex);
 
-        cout << " predecesso: " << predec.getValue() << endl;
-        cout << "index " << index << endl;
-        cout << "child index p " << left.getChildren(index) << endl;
+        //cout << " predecesso: " << predec.getValue() << endl;
+        //cout << "index " << index << endl;
+        cout << "child index p " << x.getChildren(index) << endl;
 
         x.setKey(index, predec);
-
-        for(int i = 0; i < x.getLenght(); i++)
-        {
-            cout << x.getKey(i).getValue() << endl;
-        }
 
         //escreve as mudancas no disco
         typedFile<T>::writeRecord(x, pageIndex);
@@ -456,18 +451,15 @@ bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned 
     return true;
 }
 template<class T>
-T tree<T>::findPred(record<T> child,unsigned int index, unsigned long long int childIndex)
+T tree<T>::findPred(record<T> child, unsigned int index, unsigned long long int childIndex)
 {
     cout << "find Predecessor" << endl;
     record<T> right, left;
 
-    cout << "index:: " << index << endl;
-    cout << "key no index:: " << child.getKey(index).getValue() << endl;
-    cout << "child leaf " << child.isLeaf() << endl;
-
     //antes do while deve descer para o filho da esquerda
-    child = readPage(child.getChildren(index)); //atualiza a esquerda
     childIndex = child.getChildren(index);
+    child = readPage(child.getChildren(index)); //atualiza a esquerda
+
 
     //O left tem t chaves
     while(!child.isLeaf())
@@ -484,28 +476,27 @@ T tree<T>::findPred(record<T> child,unsigned int index, unsigned long long int c
             //fusao
             merge(child, index, childIndex);
             //atualiza o child
-            child = readPage(child.getChildren(index)); //atualiza a esquerda
             childIndex = child.getChildren(index);
+            child = readPage(child.getChildren(index)); //atualiza a esquerda
         }
         ///se right > MIN
         if(right.getLenght() > right.MIN)
         {
-            child = readPage(child.getChildren(index + 1));
             childIndex = child.getChildren(index + 1);
+            child = readPage(child.getChildren(index + 1));
         }
         ///ROTACAO
         //rotaciona da esquerda para direita
         if(left.getLenght() > left.MIN && right.getLenght() == right.MIN)
         {
             rotate(child, index, childIndex, false); //rotaciona
-            child = readPage(child.getChildren(index + 1)); //atualiza a esquerda
             childIndex = child.getChildren(index + 1);
+            child = readPage(child.getChildren(index + 1)); //atualiza a esquerda
         }
     }
     T key = child.getKey(child.getLenght() - 1);
-    cout << "chave encontrada: " << key.getValue() << endl;
-    cout << "child index: " << childIndex << endl;
-    removeFromLeaf(child, child.getLenght()-1, childIndex);
+    child.setLenght(child.getLenght() - 1); //diminui 1 do tamanho da pag
+    typedFile<T>::writeRecord(child, childIndex); //escreve
 
     return key;
 }
