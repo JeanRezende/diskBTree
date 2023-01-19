@@ -34,6 +34,7 @@ protected:
     bool writeHeader(header &h);
     unsigned long long int index2pos(unsigned long long int i);
     unsigned long long int pos2index(unsigned long long int p);
+    bool setNewRoot(unsigned long long int i);
 };
 
 template <class T>
@@ -224,6 +225,14 @@ bool typedFile<T>::insertRecord(record<T> &r) //utilizado apenas para raiz
         return true;
     }
     return false;
+}
+
+template <class T>
+bool typedFile<T>::setNewRoot(unsigned long long int i) //função utilizada para atualizar a lista de validos
+{ //é necessaria quando há uma fusão que o merge troca a raiz
+    this->head.setFirstValid(i);
+    this->writeHeader(this->head);
+    return true;
 }
 
 template <class T>

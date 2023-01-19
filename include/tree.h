@@ -33,9 +33,9 @@ protected:
     bool insertNotFull(record<T>& x, T key, unsigned int i);
     bool split(record<T>& x, unsigned int index, unsigned int indexofX);
 
-    bool rotate(record<T> father, unsigned long long int index, unsigned long long int fatherIndex, bool side);
+    bool rotate(record<T>& father, unsigned long long int index, unsigned long long int fatherIndex, bool side);
     bool removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex);
-    bool removeFromInternalPage(record<T> x, unsigned int index, unsigned long long int pageIndex);
+    bool removeFromInternalPage(record<T>& x, unsigned int index, unsigned long long int pageIndex);
     bool downAndOrganize(T key, record<T> x, unsigned int index, unsigned long long int fatherIndex);
     bool merge(record<T>& father, unsigned int index, unsigned long long int fatherIndex);
 private:
@@ -97,37 +97,15 @@ bool tree<T>::insertNotFull(record<T>& x, T key, unsigned int i)
 
         return true;
     }
-    cout << "insertNOTfull << nao folha << " << endl;
-    cout << "tamanho da pag " << x.getLenght() <<endl;
-    //caso nao for folha
-    /*
-    int j = x.getLenght() - 1; //j = tamanho -1 vetor começa em 0
-    cout << "tamanho da pag " << x.getLenght() <<endl;
-    record<T> aux;
-    //verificar por onde descer
-    while(j >= 0 && x.getKey(j) > key)
-    {
-        j--;
-    }
-    j++;
-    */
     record<T> aux;
     int j = 0;
-    cout << "key " << key.getValue() << endl;
-    cout << "chave " << x.getKey(j).getValue() << endl;
-    cout << "chave " << x.getKey(j+1).getValue() << endl;
-    cout << "chave " << x.getKey(j+2).getValue() << endl;
 
     while (j < x.getLenght() && x.getKey(j).getValue() < key.getValue())
     {
-        cout << "chave " << x.getKey(j).getValue() << endl;
         j++;
     }
 
-
     aux = this->readPage(x.getChildren(j));
-    cout << "aux chave 0 : " << aux.getKey(0).getValue() << endl;
-    cout << "jota : " << j << endl;
 
     if(aux.getLenght() == aux.MAX)   //se a pagina tiver cheia divide
     {
@@ -202,6 +180,7 @@ bool tree<T>::split(record<T>& x, unsigned int index, unsigned int indexofX)
     x.setLenght(x.getLenght() + 1);
 
     this->setRoot(x); //atualiza a raiz
+    //typedFile<T>::setNewRoot(indexofX); //atualiza a lista de validos
 
     //escreve
     typedFile<T>::writeRecord(x, indexofX);
@@ -216,7 +195,7 @@ bool tree<T>::insert(T key)
 {
     record<T> x = this->getRoot(); //crio ponteiros auxiliares
 
-    unsigned long long int rootIndex = typedFile<T>::getFirstValid(); //index da raiz
+    unsigned long long int rootIndex = getRootIndex(); //index da raiz
     unsigned int i = 0;
 
     //cout << "----------------------------------------------------------" << key.getValue() << endl;
@@ -230,9 +209,9 @@ bool tree<T>::insert(T key)
 
         typedFile<T>::insertRecord(newRoot); // insere a nova raiz
 
-        split(newRoot, 0, rootIndex); //chama o split para dividir o filho com root index antigo
+        rootIndex = getRootIndex(); //atualiza o root index
 
-        //rootIndex = typedFile<T>::getFirstValid(); //atualiza o index da raiz
+        split(newRoot, 0, rootIndex); //chama o split para dividir o filho com root index antigo
 
         //busca posicao para inserir chave
         if ( newRoot.getKey(0) < key)  //esquerda ou direita
@@ -350,6 +329,7 @@ int tree<T>::search(T key, record<T> x )
 template<class T>
 bool tree<T>::remove(T key, record<T> x, unsigned long long int pageIndex)
 {
+    cout << "remove " << endl;
     if(x.getLenght() == 0)
     {
         // vazio
@@ -357,13 +337,13 @@ bool tree<T>::remove(T key, record<T> x, unsigned long long int pageIndex)
     }
     unsigned int index = 0;
     //busca a chave na pagina e soma no index
-    while( x.getLenght() > index && key.getValue() > x.getKey(index).getValue())
+    while( x.getLenght() > index && key > x.getKey(index))
     {
         index++;
     }
     //testa na posição do index se chegou no valor desejado, e se é folha
     //remocao caso 1
-    if(key.getValue() == x.getKey(index).getValue() && x.isLeaf())
+    if(key == x.getKey(index) && x.isLeaf())
     {
         return this->removeFromLeaf(x, index, pageIndex);
     }
@@ -372,7 +352,7 @@ bool tree<T>::remove(T key, record<T> x, unsigned long long int pageIndex)
     {
         unsigned long long int fatherIndex = this->getRootIndex();
 
-        if(key.getValue() == x.getKey(index).getValue())//achou o valor na pagina interna
+        if(key == x.getKey(index))//achou o valor na pagina interna
         {
             return this->removeFromInternalPage(x, index, pageIndex);
         }
@@ -386,13 +366,13 @@ template<class T>
 bool tree<T>::removeFromLeaf(record<T> x, unsigned int index, unsigned long long int pageIndex)
 {
     cout << "remove from leaf " << endl;
-    cout << "index = " << index << endl;
     //reorganiza chaves, sobreescrevendo o valor removido
     for(int i = index; i < x.getLenght(); i++ )
     {
+        cout << x.getKey(i).getValue() <<  endl;
         x.setKey(i, x.getKey(i+1)); //set key recebe o proximo
         //como e folha não precisa reorganizar filhos
-        cout << x.getKey(i+1).getValue() <<  endl;
+
     }
     x.setLenght(x.getLenght() - 1); //diminui 1 do tamanho da pag
     typedFile<T>::writeRecord(x, pageIndex); //escreve
@@ -401,12 +381,12 @@ bool tree<T>::removeFromLeaf(record<T> x, unsigned int index, unsigned long long
     if(pageIndex == this->getRootIndex())
     {
         this->root = x;
+
     }
-    cout << "chegou no return " << endl;
     return true;
 }
 template<class T>
-bool tree<T>::removeFromInternalPage(record<T> x, unsigned int index, unsigned long long int pageIndex)
+bool tree<T>::removeFromInternalPage(record<T>& x, unsigned int index, unsigned long long int pageIndex)
 {
     cout << "remove internal page " << endl;
     T key = x.getKey(index); //pego novamente a chave para não ter que passar por parametro
@@ -417,26 +397,16 @@ bool tree<T>::removeFromInternalPage(record<T> x, unsigned int index, unsigned l
 
     if( left.getLenght() > left.MIN) //tamanho maior que o minimo
     {
-        x.setKey(index, left.getKey(left.getLenght() - 1)); //sobe o predescessor de x
-
-        left.setLenght( left.getLenght() - 1 ); //diminui o filho a esquerda
-        typedFile<T>::writeRecord(x, pageIndex); //escreve
-        typedFile<T>::writeRecord(left, x.getChildren(index));
+        rotate(x, index, pageIndex, false);
+        right = readPage(x.getChildren(index + 1)); //atualiza filho da direita
+        remove(key, right, x.getChildren(index + 1)); //chama o remover de novo na pag unida
 
     }
     else if (right.getLenght() > right.MIN)
     {
-        x.setKey(index, right.getKey(0)); //sobe o sucessor de x
-
-        for(int i = 0; i < right.getLenght(); i++)  //reorganizar chaves
-        {
-            right.setKey(i, right.getKey(i + 1) );
-        }
-        right.setLenght(right.getLenght() - 1 ); //atualiza o tamanho
-        // escreve no disco
-        typedFile<T>::writeRecord(x, pageIndex);
-        typedFile<T>::writeRecord(right, x.getChildren(index + 1));
-
+        rotate(x, index, pageIndex, true);
+        left = readPage(x.getChildren(index)); //atualiza o filho da esquerda
+        remove(key, left, x.getChildren(index)); //chama o remover de novo na pag unida
     }
     else
     {
@@ -446,7 +416,7 @@ bool tree<T>::removeFromInternalPage(record<T> x, unsigned int index, unsigned l
 
         left = readPage(x.getChildren(index)); //atualiza a pag apos merge
 
-        remove(key, x, pageIndex); //chama o remover de novo na pag unida
+        remove(key, left, x.getChildren(index)); //chama o remover de novo na pag unida
     }
     if(pageIndex == this->getRootIndex()) //se for remover da raiz
     {
@@ -463,54 +433,43 @@ bool tree<T>::downAndOrganize(T key, record<T> x, unsigned int index, unsigned l
 
     left = readPage(x.getChildren(index));
     right = readPage(x.getChildren(index + 1));
-
+    ///MERGE
     ///esquerda e direita com t-1
-    if(left.getLenght() <= left.MIN && right.getLenght() <= right.MIN)
+    if(left.getLenght() == left.MIN && right.getLenght() == right.MIN)
     {
         //fusao
-        cout << " fusao " << endl;
         merge(x, index, fatherIndex);
         left = readPage(x.getChildren(index)); //atualiza a esquerda
-        for(unsigned int j = 0; j < left.getLenght(); j++) //passando pelas chaves da direita
-        {
-            cout << "chaves do left " << j << " :" << left.getKey(j).getValue() << endl;
-        }
         remove(key, left,x.getChildren(index));
         return true;
     }
-    ///esquerda com t-1, direita + que t
-    if(left.getLenght() == left.MIN && right.getLenght() > right.MIN)
+    ///ROTACAO OU REMOCAO
+    cout << "maior chave do left: " << left.getKey(left.getLenght() - 1 ).getValue() << endl;
+    //se a maior chave da esquerda for maior ou igual a chave deve descer para esquerda
+    if( left.getKey(left.getLenght() - 1 ) >= key)
     {
-        rotate(x, index, fatherIndex, true); //rotaciona
-        left = readPage(x.getChildren(index)); //atualiza a esquerda
-        remove(key, left, x.getChildren(index)); // chama o remover passando o filho rotacionado
+        cout << "left -----" << endl;
+        ///esquerda com t-1, direita + que t
+        if(left.getLenght() == left.MIN && right.getLenght() > right.MIN)
+        {
+            rotate(x, index, fatherIndex, true); //rotaciona
+            left = readPage(x.getChildren(index)); //atualiza a esquerda
+        }
+        return remove(key, left, x.getChildren(index)); // chama o remover passando o filho rotacionado
+    }
+    else
+    {
+        cout << "right -----" << endl;
+        ///direita com t-1, esquerda + que t
+        if(left.getLenght() > left.MIN && right.getLenght() == right.MIN)
+        {
+            rotate(x, index, fatherIndex, false); //rotaciona
+            right = readPage(x.getChildren(index + 1)); //atualiza a direita
+        }
+        remove(key, right, x.getChildren(index + 1)); // chama o remover passando o filho rotacionado
         return true;
     }
-    else   /// esquerda tem t chaves
-    {
-        //se esquerda tem t ou mais chaves
-        cout << "chamando o remove pro filho com t chaves" << endl;
-        cout << fatherIndex << endl;
-
-        fatherIndex = x.getChildren(index); //fatherIndex atualiza
-        remove(key, left, fatherIndex);
-        return true;
-    }
-    ///direita com t-1, esquerda + que t
-    if(left.getLenght() > left.MIN && right.getLenght() <= right.MIN)
-    {
-        rotate(x, index, fatherIndex, false); //rotaciona
-        right = readPage(x.getChildren(index)); //atualiza a direita
-        remove(key, right, x.getChildren(index)); // chama o remover passando o filho rotacionado
-        return true;
-    }
-    else  /// caso direita com t chaves remove
-    {
-        fatherIndex = x.getChildren(index); //fatherIndex atualiza
-        remove(key, right, fatherIndex);
-        return true;
-    }
-    return true;
+    return false;
 }
 
 template<class T>
@@ -521,10 +480,7 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
 
     left = readPage(father.getChildren(index));
     right = readPage(father.getChildren(index + 1));
-    int rightIndex(father.getChildren(index + 1));
-
-    //cout << "left key 0 " << left.getKey(0).getValue() << endl;
-    //cout << "right key 0 " << right.getKey(0).getValue() << endl;
+    unsigned long long int rightIndex(father.getChildren(index + 1));
 
     //desce a chave do pai para ser a mediana do filho a esquerda
     left.setKey(left.getLenght(),father.getKey(index));
@@ -540,7 +496,9 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
     {
         father.setChildren(j, father.getChildren(j + 1));
     }
+
     father.setLenght(father.getLenght() - 1); //atualiza o tamanho do pai
+
     //copia dos filhos da direita para esquerda
     for(unsigned int j = 0; j < right.getLenght(); j++) //passando pelas chaves da direita
     {
@@ -557,20 +515,6 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
     //novo tamanho da esquerda
     left.setLenght(left.getLenght() + right.getLenght());
 
-    /*
-    //remove print
-    cout << "father" << endl;
-    for(unsigned int j = 0; j < father.getLenght(); j++){//passando pelas chaves da direita
-            cout << father.getKey(j).getValue() << endl;
-    }
-    cout << "lenght " << father.getLenght() << endl;
-    cout << "left" << endl;
-    for(unsigned int j = 0; j < left.getLenght(); j++){//passando pelas chaves da direita
-            cout << left.getKey(j).getValue() << endl;
-    }
-    cout << "lenght " << left.getLenght() << endl;
-    */
-
     //escreve as mudancas no disco
     typedFile<T>::writeRecord(father, fatherIndex);
     typedFile<T>::writeRecord(left, father.getChildren(index));
@@ -580,16 +524,22 @@ bool tree<T>::merge(record<T>& father, unsigned int index, unsigned long long in
 
     if(fatherIndex == this->getRootIndex()) //se for remover da raiz
     {
-        cout << "atualizou o root" << endl;
-        this->root = left;
-        return true;
+        this->setRoot(father); //atualiza a raiz
+
+        if( father.getLenght() == 0 ) //se raiz estiver vazia
+        {
+            cout << "atualizou o root" << endl;
+            this->setRoot(left); //raiz fez o merge no left entao atualiza
+            typedFile<T>::setNewRoot(father.getChildren(index)); //atuliza o primeiro valido
+            typedFile<T>::deleteRecord(father, fatherIndex); //deleta o antigo father
+        }
     }
 
     return true;
 }
 
 template<class T>
-bool tree<T>::rotate( record<T> father, unsigned long long int index, unsigned long long int fatherIndex, bool side)
+bool tree<T>::rotate( record<T>& father, unsigned long long int index, unsigned long long int fatherIndex, bool side)
 {
     record<T> right, left;
 
@@ -598,43 +548,54 @@ bool tree<T>::rotate( record<T> father, unsigned long long int index, unsigned l
 
     if(side == true) //rotação esquerda(t-1) direita(t>min)
     {
-        //desce a chave para o filho esquerdo
+        cout << "rotacao da direita para esq" << endl;
         left.setKey(left.getLenght(), father.getKey(index));
-        left.setLenght(left.getLenght() + 1); //aumenta o tamanho
+        left.setLenght(left.getLenght() + 1);
 
-        //caso nao seja folha deve copiar o filho da direita
-        if(!left.isLeaf())
-        {
-            //filho da direita na posicao 0
-            left.setChildren(left.getLenght(), right.getChildren(0));
-        }
-        //chave da direita sobe para o pai
         father.setKey(index, right.getKey(0));
-        //reorganizar chaves na pagina direita
-        for(int i = 0; i < right.getLenght(); i++)
+
+        //reorganizar chaves da pagina da direita
+        for(int i = 0; i < right.getLenght() - 1; i ++)
         {
             right.setKey(i, right.getKey(i + 1));
         }
-        right.setLenght( right.getLenght() - 1 ); //diminui o tamanho da direita
+        if(!right.isLeaf()) //os dois nao sao folha
+        {//realoca filhos do right
+            left.setChildren(left.getLenght()-1, right.getChildren(0));
+            for(int i = 0; i < right.getLenght(); i ++)
+            {
+                right.setChildren(i, right.getChildren(i + 1));
+            }
+        }
     }
     else  //rotação direita(t-1) esquerda(t>min)
     {
-        //reorganizar chaves da pagina da direita pra receber a chave da esquerda
-        for(int i = right.getLenght(); i >= 1; i--) //TODO test for
+        cout << "rotacao da esquerda para direita" << endl;
+        //reorganizar chaves da pagina da direita
+        for(int i = right.getLenght(); i > 0; i --)
         {
             right.setKey(i, right.getKey(i - 1));
         }
-        right.setKey(0, father.getKey(index)); //coloco a chave do pai na pos 0
-        right.setLenght(right.getLenght() + 1); // atualizo o tamanho
+        right.setKey(0, father.getKey(index)); //puxando a chave do pai para ser o inicio do right
 
-        //se nao for folha copia o filho da chave na pag esq
-        if(!left.isLeaf())
-        {
-            right.setChildren(right.getLenght(), left.getChildren(left.getLenght()));
+        father.setKey(index, left.getKey(left.getLenght() - 1)); // puxando a chave do left para o father
+
+        if(!left.isLeaf()) //os dois não sao folha
+        {//realoca filhos do right
+            for(int i = right.getLenght() + 1; i > 0; i --)
+            {
+                right.setChildren(i, right.getChildren(i - 1));
+            }
+            right.setChildren(0, left.getChildren(left.getLenght())); //copia o ultimo filho do left
+            //for(int i = 0; i < right.getLenght() + 1; i ++)
+            //{
+            //    right.setChildren(i, right.getChildren(i + 1));
+            //}
+            //right.setChildren(0, left.getChildren(left.getLenght()));
         }
 
-        father.setKey(index, left.getKey(left.getLenght()-1)); //pai recebe a chave da esquerda
-        left.setLenght(left.getLenght() - 1 ); //esquerda diminui de tamanho
+        left.setLenght(left.getLenght() - 1); //atualiza o tamanho do filho a esquerda
+        right.setLenght(right.getLenght() + 1); //atualiza o tamanho do filho a direita
     }
 
     //escreve as mudancas no disco
