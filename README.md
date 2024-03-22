@@ -1,4 +1,4 @@
-Árvore B em disco
+# Árvore B em disco
 
 O algoritmo foi implementado na disciplina de técnicas de programação, com o objetivo de serealizar números do tipo float e inseri-los em uma árvore B em disco secundário.
 Incluí operações de inserção, remoção e busca baseados no modelo proposto por Cormen, que consiste em realizar todas operações sem retornar aos elementos superiores da árvore.
